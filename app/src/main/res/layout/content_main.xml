@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -20,7 +19,7 @@
         android:elevation="5dp"
         android:textColor="@color/mauve"
         android:textStyle="bold"
-        android:id="@+id/textView"
+        android:id="@+id/title"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
@@ -31,11 +30,11 @@
         android:text="Gare de départ"
 
 
-        android:id="@+id/textView2"
+        android:id="@+id/depart"
         android:textStyle="bold"
 
         android:layout_marginTop="72dp"
-        android:layout_below="@+id/textView"
+        android:layout_below="@+id/title"
         android:layout_toRightOf="@+id/imageView2"
         android:layout_toEndOf="@+id/imageView2" />
 
@@ -46,16 +45,17 @@
         android:text="Gare d&apos;arrivée"
 
         android:textStyle="bold"
-        android:id="@+id/textView3"
-        android:layout_above="@+id/spinner2"
-        android:layout_alignLeft="@+id/textView2"
-        android:layout_alignStart="@+id/textView2" />
+        android:id="@+id/arrivee"
+        android:layout_above="@+id/spinnerarr"
+        android:layout_alignLeft="@+id/depart"
+        android:layout_alignStart="@+id/depart" />
 
     <Spinner
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/spinner"
-        android:layout_below="@+id/textView2"
+        android:gravity="center"
+        android:layout_below="@+id/depart"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
        />
@@ -63,37 +63,12 @@
     <Spinner
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/spinner2"
+        android:id="@+id/spinnerarr"
         android:layout_below="@+id/imageView3"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Partir maintenant"
-        android:textStyle="italic"
-        android:elevation="5dp"
-        android:background="@color/mauve"
-        android:textColor="@color/white"
-        android:id="@+id/maintenant"
-        android:layout_below="@+id/spinner2"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="73dp" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Partir plus tard"
-        android:textColor="@color/white"
-       android:background="@color/green"
-        android:id="@+id/partirpl"
-
-        android:layout_alignTop="@+id/maintenant"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -128,9 +103,46 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/imageButton"
-
+        android:background="@color/white"
         android:src="@drawable/ic_action_room"
         android:layout_alignTop="@+id/imageView2"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
+
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:layout_below="@+id/spinnerarr">
+
+        <Button
+            style="@style/MyButton"
+            android:layout_width="251dp"
+            android:layout_height="wrap_content"
+            android:text="Partir maintenant"
+            android:textStyle="italic"
+            android:elevation="5dp"
+            android:background="@color/mauve"
+            android:id="@+id/maintenant"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignBottom="@+id/partirpl"
+            android:layout_alignTop="@+id/partirpl" />
+
+        <Button style="@style/MyButton"
+            android:layout_width="274dp"
+            android:layout_height="wrap_content"
+            android:text="@string/plustard"
+            android:textColor="@color/white"
+            android:background="@color/green"
+            android:id="@+id/partirpl"
+
+
+
+            android:layout_gravity="right"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+    </RelativeLayout>
 </RelativeLayout>

@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
                 "Mahdia La Gare ", "EZZAHRA", "Borj Arif", "Sidi Messaoud", "Zone Touristique"
         };
        final  Spinner dep = (Spinner) findViewById(R.id.spinner);
-        final Spinner arr = (Spinner) findViewById(R.id.spinner2);
+        final Spinner arr = (Spinner) findViewById(R.id.spinnerarr);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, arraySpinner);
         dep.setAdapter(adapter);
