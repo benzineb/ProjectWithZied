@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.nfc.Tag;
 import android.util.Log;
 
 import java.io.FileOutputStream;
@@ -26,8 +27,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private SQLiteDatabase myDataBase;
 
     private final Context myContext;
-String x,y;
-
+String head,depart;
+    public  static String departure="Mahdia";
+public static String Tag="jabeur";
     /**
      * Constructor
      * Takes and keeps a reference of the passed context in order to access to the application assets and resources.
@@ -161,9 +163,12 @@ String x,y;
     // to you to create adapters for your views.
     public Cursor query(String table, String[] columns, String selection, String selectionArgs, String groupBy, String having, String orderBy) {
        MainActivity mainActivity=new MainActivity();
-        y=mainActivity.getGareDepart();
-        x=mainActivity.getHeadsign();
-        return myDataBase.query("stop_times,stops",new String[]{"departure_time"}, "stop_times.stop_id=stops.stop_id and stops.stop_name=\"Ezzahra\" and trip_id<43 and stop_times.stop_headsign=\"Sousse\"", null, null, null,"departure_time");
+        depart=mainActivity.getGareDepart();
+        head=mainActivity.getHeadsign();
+        Log.d(Tag, "query:"+departure );
+        return myDataBase.query("stop_times,stops",new String[]{"departure_time"}, "stop_times.stop_id=stops.stop_id and stops.stop_name=\"+departure+\" and trip_id<43 and stop_times.stop_headsign=\"Sousse\"", null, null, null,"departure_time");
+     //   return myDataBase.rawQuery("select departure_time from stop_times,stops WHERE stop_times.stop_id=stops.stop_id AND stops.stop_name="+departure+" and trip_id<43 AND stop_times.stop_headsign="+head+"",new String[]{"departure_time"});
     }
+
 }
 
