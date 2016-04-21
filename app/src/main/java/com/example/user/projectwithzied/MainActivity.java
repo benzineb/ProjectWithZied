@@ -40,7 +40,40 @@ public static String GareDepart;
         Button partir = (Button) findViewById(R.id.maintenant);
         Button partirpl = (Button) findViewById(R.id.partirpl);
         this.arraySpinner = new String[]{
-                "Mahdia", "Ezzahra", "Borj Arif", "Sidi Massaoud", "Mahdia Z.T."
+
+                "Mahdia",
+                "Ezzahra" ,
+                "Borj Arif" ,
+                "Sidi Massaoud" ,
+                "Mahdia Z.T." ,
+                "Baghdadi" ,
+                "Békalta",
+                "Téboulba" ,
+                "Téboulba Z.I." ,
+                "Moknine" ,
+                "Moknine Gribaa" ,
+                "Ksar Hellal" ,
+                "Ksar Hellal Z.I.",
+                "Sayada" ,
+                "Lamta" ,
+                "Bouhadjar" ,
+                "Ksibet Bennane",
+                "Khnis Bembla" ,
+                "Frina" ,
+                "Monastir Zone Industrielle" ,
+                "La Faculté 2",
+                "Monastir",
+                "La Faculté" ,
+                "Aéroport",
+                "Les Hôtels",
+                "Sahline Sabkha",
+                "Sahline Ville" ,
+                "Sousse Zone Industrielle",
+                "Arrêt Dépot ",
+                "Sousse Sud",
+                "Sousse Mohamed V",
+                "Sousse Bab Jédid"
+
         };
         final Spinner dep = (Spinner) findViewById(R.id.spinner);
         final Spinner arr = (Spinner) findViewById(R.id.spinnerarr);
@@ -49,9 +82,7 @@ public static String GareDepart;
                 android.R.layout.simple_spinner_item, arraySpinner);
         dep.setAdapter(adapter);
         arr.setAdapter(adapter);
-        GareDepart = dep.getSelectedItem().toString();
-        IndexGareDepart = dep.getSelectedItemPosition();
-        IndexGareArrivee = arr.getSelectedItemPosition();
+
 
 
 
@@ -59,11 +90,15 @@ public static String GareDepart;
     partir.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+
             if (dep.getSelectedItem() == arr.getSelectedItem()) {
                 Toast.makeText(MainActivity.this, "la station du départ doit être differente de l'arrivée ", Toast.LENGTH_LONG).show();
             } else {
-
+                GareDepart = dep.getSelectedItem().toString();
+                IndexGareDepart = dep.getSelectedItemPosition();
+                IndexGareArrivee = arr.getSelectedItemPosition();
                 DataBaseHelper myDbHelper = new DataBaseHelper(MainActivity.this);
+
 
 
                 try {
@@ -90,13 +125,15 @@ public static String GareDepart;
                 }
 
                 Toast.makeText(MainActivity.this, "success", Toast.LENGTH_SHORT).show();
-             //     c = myDbHelper.query("stop_times,stops",new String[]{"departure_time"}, "stop_times.stop_id=stops.stop_id AND stops.stop_name="+departure+" and trip_id<43 AND stop_times.stop_headsign="+headsign+"", null, null, null,"departure_time");
-              c = myDbHelper.query("stop_times,stops", null, null, null, null, null, null);
-                Log.d(Tag, "query:" + departure);
+          //   c=myDbHelper.query("agency",null,null,null,null,null,null);
+                // c = myDbHelper.query("stop_times,stops",new String[]{"departure_time"}, "stop_times.stop_id=stops.stop_id AND stops.stop_name=\" "+GareDepart.toString()+"\" and trip_id<43 AND stop_times.stop_headsign=\""+headsign+"\"", null, null, null,"departure_time");
+             c = myDbHelper.query("stop_times,stops", null, null, null, null, null, null);
+                Log.d(Tag, "query:" + GareDepart);
                 if (c.moveToFirst()) {
                     do {
                         Toast.makeText(MainActivity.this,
                                 "departure_time=" + c.getString(0), Toast.LENGTH_LONG).show();
+                        Log.d(Tag, "onClick:"+c.getString(0));
                     } while (c.moveToNext());
 
                 }

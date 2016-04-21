@@ -165,9 +165,11 @@ public static String Tag="jabeur";
        MainActivity mainActivity=new MainActivity();
         depart=mainActivity.getGareDepart();
         head=mainActivity.getHeadsign();
-        Log.d(Tag, "query:"+departure );
-        return myDataBase.query("stop_times,stops",new String[]{"departure_time"}, "stop_times.stop_id=stops.stop_id and stops.stop_name=\"+departure+\" and trip_id<43 and stop_times.stop_headsign=\"Sousse\"", null, null, null,"departure_time");
-     //   return myDataBase.rawQuery("select departure_time from stop_times,stops WHERE stop_times.stop_id=stops.stop_id AND stops.stop_name="+departure+" and trip_id<43 AND stop_times.stop_headsign="+head+"",new String[]{"departure_time"});
+        Log.d(Tag, "query:"+mainActivity.GareDepart );
+       return myDataBase.query("stop_times,stops", new String[]{"departure_time"}, "stop_times.stop_id=stops.stop_id  and trip_id<43 and stops.stop_name=? and stop_times.stop_headsign=?", new String[]{depart,head}, null, null, "departure_time");
+
+   //  return myDataBase.query("agency",null,null,null,null,null,null);
+      // return myDataBase.rawQuery("select departure_time from stop_times,stops WHERE stop_times.stop_id=stops.stop_id AND stops.stop_name=\"+"+mainActivity.GareDepart+"\" and trip_id<43 AND stop_times.stop_headsign="+head+"",new String[]{"departure_time"});
     }
 
 }
