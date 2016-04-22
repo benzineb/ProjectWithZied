@@ -27,9 +27,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private SQLiteDatabase myDataBase;
 
     private final Context myContext;
-String head,depart;
-    public  static String departure="Mahdia";
-public static String Tag="jabeur";
+    String head, depart;
+    public static String departure = "Mahdia";
+    public static String Tag = "jabeur";
+
     /**
      * Constructor
      * Takes and keeps a reference of the passed context in order to access to the application assets and resources.
@@ -162,15 +163,16 @@ public static String Tag="jabeur";
     // You could return cursors by doing "return myDataBase.query(....)" so it'd be easy
     // to you to create adapters for your views.
     public Cursor query(String table, String[] columns, String selection, String selectionArgs, String groupBy, String having, String orderBy) {
-       MainActivity mainActivity=new MainActivity();
-        depart=mainActivity.getGareDepart();
-        head=mainActivity.getHeadsign();
-        Log.d(Tag, "query:"+mainActivity.GareDepart );
-       return myDataBase.query("stop_times,stops", new String[]{"departure_time"}, "stop_times.stop_id=stops.stop_id  and trip_id<43 and stops.stop_name=? and stop_times.stop_headsign=?", new String[]{depart,head}, null, null, "departure_time");
+        MainActivity mainActivity = new MainActivity();
+        depart = mainActivity.getGareDepart();
+        head = mainActivity.getHeadsign();
+        Log.d(Tag, "query:" + mainActivity.GareDepart);
+        return myDataBase.query("stop_times,stops", new String[]{"departure_time"}, "stop_times.stop_id=stops.stop_id  and trip_id<43 and stops.stop_name=? and stop_times.stop_headsign=?", new String[]{depart, head}, null, null, "departure_time");
+    }
 
-   //  return myDataBase.query("agency",null,null,null,null,null,null);
-      // return myDataBase.rawQuery("select departure_time from stop_times,stops WHERE stop_times.stop_id=stops.stop_id AND stops.stop_name=\"+"+mainActivity.GareDepart+"\" and trip_id<43 AND stop_times.stop_headsign="+head+"",new String[]{"departure_time"});
+    public Cursor map(String table, String[] columns, String selection, String selectionArgs, String groupBy, String having, String orderBy) {
+        MainActivity mainActivity = new MainActivity();
+        return myDataBase.query("stops", new String[]{"stop_lon,stop_lat"},"stop_name=\"Mahdia\"",null,null,null,null);
     }
 
 }
-

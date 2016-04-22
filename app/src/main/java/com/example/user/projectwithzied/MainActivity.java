@@ -30,12 +30,14 @@ import com.google.android.gms.location.LocationServices;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity  implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     private String[] arraySpinner;
     static final int dp=0;
     static final int arr=0;
     Cursor c=null;
+    Cursor cMap=null;
 public static String GareDepart;
    public static Integer IndexGareArrivee;
     public static Integer IndexGareDepart;
@@ -146,8 +148,19 @@ public static String GareDepart;
                 }
 
                 Toast.makeText(MainActivity.this, "success", Toast.LENGTH_SHORT).show();
-          //   c=myDbHelper.query("agency",null,null,null,null,null,null);
-                // c = myDbHelper.query("stop_times,stops",new String[]{"departure_time"}, "stop_times.stop_id=stops.stop_id AND stops.stop_name=\" "+GareDepart.toString()+"\" and trip_id<43 AND stop_times.stop_headsign=\""+headsign+"\"", null, null, null,"departure_time");
+                cMap=myDbHelper.map("stops",null, null, null, null, null, null);
+                HashMap<String,Double> temp = new HashMap<String,Double>();
+
+                if (cMap.moveToFirst()) {
+                    do {
+                        Toast.makeText(MainActivity.this,
+                                "longitude=" + cMap.getDouble(0)+
+                                        "largitude"+cMap.getString(1)
+                                , Toast.LENGTH_LONG).show();
+                      //  Log.d(Tag, "cMap:"+c.getString(0));
+                    } while (cMap.moveToNext());
+
+                }
              c = myDbHelper.query("stop_times,stops", null, null, null, null, null, null);
                 Log.d(Tag, "query:" + GareDepart);
                 if (c.moveToFirst()) {
