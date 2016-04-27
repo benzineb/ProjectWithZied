@@ -1,6 +1,9 @@
 package com.example.user.projectwithzied;
 
 import android.Manifest;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.location.Location;
@@ -11,14 +14,17 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -30,20 +36,25 @@ import com.google.android.gms.location.LocationServices;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity  implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     private String[] arraySpinner;
     static final int dp=0;
     static final int arr=0;
     Cursor c=null;
-    Cursor cMap=null;
-public static String GareDepart;
-   public static Integer IndexGareArrivee;
+   public  Cursor cMap=null;
+    public static String GareDepart;
+    public static Integer IndexGareArrivee;
     public static Integer IndexGareDepart;
-  public static  String headsign;
+    public static  String headsign;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
+    // Constant for identifying the dialog
+    private static final int DIALOG_ALERT = 10;
 
     public static String Tag="jabeur";
 
@@ -51,6 +62,8 @@ public static String GareDepart;
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        final HashMap<String,List<Double>> temp = new HashMap<String,List<Double>>();
+        final List<Double> values = new ArrayList<Double>();
         mGoogleApiClient = new GoogleApiClient.Builder(this).addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -122,9 +135,9 @@ public static String GareDepart;
                 IndexGareArrivee = arr.getSelectedItemPosition();
                 DataBaseHelper myDbHelper = new DataBaseHelper(MainActivity.this);
 
+            Horaires horaires=new Horaires();
 
-
-                try {
+           /*     try {
 
                     myDbHelper.createDataBase();
 
@@ -147,30 +160,54 @@ public static String GareDepart;
                     }
                 }
 
-                Toast.makeText(MainActivity.this, "success", Toast.LENGTH_SHORT).show();
-                cMap=myDbHelper.map("stops",null, null, null, null, null, null);
-                HashMap<String,Double> temp = new HashMap<String,Double>();
+                Toast.makeText(MainActivity.this, "success", Toast.LENGTH_SHORT).show();*/
+           //     cMap=myDbHelper.map("stops",null, null, null, null, null, null);
+               Intent horaire=new Intent(MainActivity.this,Horaires.class);
 
-                if (cMap.moveToFirst()) {
+               startActivity(horaire);
+
+
+
+              /*  AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+                LayoutInflater inflater = getLayoutInflater();
+                View convertView = (View) inflater.inflate(R.layout.list_view_horaires, null);
+                alertDialog.setView(convertView);
+                alertDialog.setTitle("List");
+                ListView lv = (ListView) convertView.findViewById(R.id.list_data);
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,android.R.layout.simple_list_item_2,c.getString(0));
+                lv.setAdapter(adapter);
+                alertDialog.setView(convertView);
+                alertDialog.show();*/
+
+
+    /*           if (cMap.moveToFirst()) {
                     do {
-                        Toast.makeText(MainActivity.this,
-                                "longitude=" + cMap.getDouble(0)+
-                                        "largitude"+cMap.getString(1)
+                       values.add(cMap.getDouble(1));
+                        values.add(cMap.getDouble(2));
+                      temp.put(cMap.getString(0),values);
+
+                       Toast.makeText(MainActivity.this,
+                                "name"+cMap.getString(0)+"\n"+
+                                "longitude=" + cMap.getDouble(1)+
+                                        "largitude"+cMap.getString(2)
                                 , Toast.LENGTH_LONG).show();
-                      //  Log.d(Tag, "cMap:"+c.getString(0));
+                       Log.d(Tag, "cMap:"+c.getString(0));
                     } while (cMap.moveToNext());
 
                 }
-             c = myDbHelper.query("stop_times,stops", null, null, null, null, null, null);
+                printMap(temp);
+                Log.d(Tag, "hashmap: ");*/
+       /*     c = myDbHelper.query("stop_times,stops", null, null, null, null, null, null);
                 Log.d(Tag, "query:" + GareDepart);
                 if (c.moveToFirst()) {
                     do {
+                        ArrayList list = new ArrayList();
                         Toast.makeText(MainActivity.this,
                                 "departure_time=" + c.getString(0), Toast.LENGTH_LONG).show();
                         Log.d(Tag, "onClick:"+c.getString(0));
                     } while (c.moveToNext());
 
-                }
+                }*/
             }
         }
     });
@@ -271,10 +308,20 @@ public static String GareDepart;
         mGoogleApiClient.connect();
         Toast.makeText(this, "client connecté", Toast.LENGTH_SHORT).show();
     }
+    @Override
 
     protected void onStop() {
         super.onStop();
         mGoogleApiClient.disconnect();
+    }
+    public void printMap(HashMap mp) {
+        Iterator it = mp.entrySet().iterator();
+        while (it.hasNext()) {
+           HashMap.Entry pair = (HashMap.Entry)it.next();
+        Toast.makeText(MainActivity.this,"key= "+pair.getKey() + " values= " + pair.getValue(),Toast.LENGTH_LONG).show();
+
+            it.remove(); // avoids a ConcurrentModificationException
+        }
     }
 }
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.user.projectwithzied">
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -8,10 +9,11 @@
     <!--
  The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but are recommended.
-    --> <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-    <uses-library android:name="com.google.android.maps"/>
+    <uses-library android:name="com.google.android.maps" />
 
     <application
         android:allowBackup="true"
@@ -20,11 +22,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <supports-screens
+            android:anyDensity="true"
             android:largeScreens="true"
             android:normalScreens="true"
-            android:smallScreens="true"
-            android:anyDensity="true"
-            />
+            android:smallScreens="true" />
 
         <activity
             android:name=".MainActivity"
@@ -36,7 +37,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <activity android:name=".Horaires"></activity>
     </application>
 
 </manifest>

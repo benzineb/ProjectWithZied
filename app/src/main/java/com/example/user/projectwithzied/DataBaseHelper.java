@@ -162,17 +162,22 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     // Add your public helper methods to access and get content from the database.
     // You could return cursors by doing "return myDataBase.query(....)" so it'd be easy
     // to you to create adapters for your views.
-    public Cursor query(String table, String[] columns, String selection, String selectionArgs, String groupBy, String having, String orderBy) {
+    public Cursor query(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy) {
         MainActivity mainActivity = new MainActivity();
         depart = mainActivity.getGareDepart();
         head = mainActivity.getHeadsign();
         Log.d(Tag, "query:" + mainActivity.GareDepart);
-        return myDataBase.query("stop_times,stops", new String[]{"departure_time"}, "stop_times.stop_id=stops.stop_id  and trip_id<43 and stops.stop_name=? and stop_times.stop_headsign=?", new String[]{depart, head}, null, null, "departure_time");
+        return myDataBase.query("stop_times,stops", new String[]{" rowid _id,departure_time"}, "stop_times.stop_id=stops.stop_id  and trip_id<43 and stops.stop_name=? and stop_times.stop_headsign=?", new String[]{depart, head}, null, null, "departure_time");
     }
 
     public Cursor map(String table, String[] columns, String selection, String selectionArgs, String groupBy, String having, String orderBy) {
-        MainActivity mainActivity = new MainActivity();
-        return myDataBase.query("stops", new String[]{"stop_lon,stop_lat"},"stop_name=\"Mahdia\"",null,null,null,null);
+        return myDataBase.query("stops", new String[]{"stop_name,stop_lon,stop_lat"},null,null,null,null,null);
+    }
+    public Cursor agency(String table, String[] columns, String selection, String selectionArgs, String groupBy, String having, String orderBy) {
+        return myDataBase.query("agency", new String[]{"_id,agency_url"},null,null,null,null,null);
+    }
+    public Cursor stops(String table, String[] columns, String selection, String selectionArgs, String groupBy, String having, String orderBy) {
+        return myDataBase.query("stops", new String[]{"_id,stop_name"},null,null,null,null,null);
     }
 
 }
