@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
     Cursor c=null;
    public  Cursor cMap=null;
     public static String GareDepart;
+    public static String GareArrivee;
     public static Integer IndexGareArrivee;
     public static Integer IndexGareDepart;
     public static  String headsign;
@@ -131,6 +132,7 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
                 Toast.makeText(MainActivity.this, "la station du départ doit être differente de l'arrivée ", Toast.LENGTH_LONG).show();
             } else {
                 GareDepart = dep.getSelectedItem().toString();
+                GareArrivee = arr.getSelectedItem().toString();
                 IndexGareDepart = dep.getSelectedItemPosition();
                 IndexGareArrivee = arr.getSelectedItemPosition();
                 DataBaseHelper myDbHelper = new DataBaseHelper(MainActivity.this);
@@ -247,6 +249,11 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
     public static String getGareDepart() {
         return GareDepart;
     }
+
+    public static String getGareArrivee() {
+        return GareArrivee;
+    }
+
     public static String getHeadsign() {
         if (IndexGareDepart < IndexGareArrivee) {
             headsign = "Sousse";
