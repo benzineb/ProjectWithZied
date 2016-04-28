@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -26,6 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -73,8 +75,14 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        TextView prochain=(TextView) findViewById(R.id.title) ;
         Button partir = (Button) findViewById(R.id.maintenant);
         Button partirpl = (Button) findViewById(R.id.partirpl);
+        Typeface roboto = Typeface.createFromAsset(getAssets(),
+                "font/Roboto-Medium.ttf"); //use this.getAssets if you are calling from an Activity
+        partirpl.setTypeface(roboto);
+        partir.setTypeface(roboto);
+        prochain.setTypeface(roboto);
         this.arraySpinner = new String[]{
 
                 "Mahdia",
