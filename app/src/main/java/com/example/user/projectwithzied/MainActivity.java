@@ -56,9 +56,6 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
     public static  String headsign;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
-    // Constant for identifying the dialog
-    private static final int DIALOG_ALERT = 10;
-
     public static String Tag="jabeur";
 
     @Override
@@ -76,6 +73,8 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         TextView prochain=(TextView) findViewById(R.id.title) ;
+        TextView departure=(TextView) findViewById(R.id.depart) ;
+        TextView arriv=(TextView) findViewById(R.id.arrivee) ;
         Button partir = (Button) findViewById(R.id.maintenant);
         Button partirpl = (Button) findViewById(R.id.partirpl);
         Typeface roboto = Typeface.createFromAsset(getAssets(),
@@ -83,6 +82,8 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
         partirpl.setTypeface(roboto);
         partir.setTypeface(roboto);
         prochain.setTypeface(roboto);
+        arriv.setTypeface(roboto);
+        departure.setTypeface(roboto);
         this.arraySpinner = new String[]{
 
                 "Mahdia",
@@ -144,50 +145,11 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
                 IndexGareDepart = dep.getSelectedItemPosition();
                 IndexGareArrivee = arr.getSelectedItemPosition();
                 DataBaseHelper myDbHelper = new DataBaseHelper(MainActivity.this);
-
-            Horaires horaires=new Horaires();
-
-           /*     try {
-
-                    myDbHelper.createDataBase();
-
-                } catch (IOException ioe) {
-
-                    throw new Error("Unable to create database");
-
-                }
-
-                try {
-
-                    myDbHelper.openDataBase();
-
-                } catch (SQLException sqle) {
-
-                    try {
-                        throw sqle;
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                Toast.makeText(MainActivity.this, "success", Toast.LENGTH_SHORT).show();*/
-           //     cMap=myDbHelper.map("stops",null, null, null, null, null, null);
-               Intent horaire=new Intent(MainActivity.this,Horaires.class);
-
-               startActivity(horaire);
+                Horaires horaires=new Horaires();
+                Intent horaire=new Intent(MainActivity.this,Horaires.class);
+                startActivity(horaire);
 
 
-
-              /*  AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
-                LayoutInflater inflater = getLayoutInflater();
-                View convertView = (View) inflater.inflate(R.layout.list_view_horaires, null);
-                alertDialog.setView(convertView);
-                alertDialog.setTitle("List");
-                ListView lv = (ListView) convertView.findViewById(R.id.list_data);
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,android.R.layout.simple_list_item_2,c.getString(0));
-                lv.setAdapter(adapter);
-                alertDialog.setView(convertView);
-                alertDialog.show();*/
 
 
     /*           if (cMap.moveToFirst()) {
@@ -207,17 +169,7 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
                 }
                 printMap(temp);
                 Log.d(Tag, "hashmap: ");*/
-       /*     c = myDbHelper.query("stop_times,stops", null, null, null, null, null, null);
-                Log.d(Tag, "query:" + GareDepart);
-                if (c.moveToFirst()) {
-                    do {
-                        ArrayList list = new ArrayList();
-                        Toast.makeText(MainActivity.this,
-                                "departure_time=" + c.getString(0), Toast.LENGTH_LONG).show();
-                        Log.d(Tag, "onClick:"+c.getString(0));
-                    } while (c.moveToNext());
 
-                }*/
             }
         }
     });

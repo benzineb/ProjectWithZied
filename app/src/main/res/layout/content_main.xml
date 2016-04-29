@@ -55,6 +55,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/spinner"
+        android:paddingTop="10dp"
         android:gravity="center"
         android:layout_below="@+id/depart"
         android:layout_alignParentLeft="true"
@@ -65,6 +66,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/spinnerarr"
+        android:paddingTop="10dp"
         android:layout_below="@+id/imageView3"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -95,8 +97,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/imageButton"
-        android:background="@color/white"
-        android:src="@drawable/ic_action_room"
+        android:background="@color/grey"
+        android:src="@drawable/red_icon"
 
         android:layout_alignTop="@+id/imageView2"
         android:layout_alignParentRight="true"
@@ -106,8 +108,13 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
         android:layout_below="@+id/spinnerarr">
+
+
 
         <Button
             style="@style/MyButton"
@@ -142,11 +149,6 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
 
-        <ScrollView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/scrollView"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+
     </RelativeLayout>
 </RelativeLayout>
