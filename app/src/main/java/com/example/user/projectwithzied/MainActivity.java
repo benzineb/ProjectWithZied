@@ -35,6 +35,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -57,7 +59,8 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
     public static String Tag="jabeur";
-
+   public Double lon;
+   public Double lat;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -224,10 +227,10 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
     }
     @Override
     public void onLocationChanged(Location location) {
-        double    lon = location.getLongitude();
-        double latt = location.getLatitude();
+           lon = location.getLongitude();
+         lat = location.getLatitude();
         Log.d(Tag, "onLocationChanged: ");
-        Toast.makeText(this, "longitude" + lon + "lattitude" + latt, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "longitude" + lon + "lattitude" + lat, Toast.LENGTH_LONG).show();
     }
     @Override
     public void onConnected(@Nullable Bundle bundle) {
@@ -289,6 +292,14 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
 
             it.remove(); // avoids a ConcurrentModificationException
         }
+    }
+
+    public Double getLon() {
+        return lon;
+    }
+
+    public Double getLat() {
+        return lat;
     }
 }
 

@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.SQLException;
+import java.util.Map;
 
 /**
  * Created by User on 31/03/2016.
@@ -177,7 +178,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return myDataBase.query("agency", new String[]{"_id,agency_url"},null,null,null,null,null);
     }
     public Cursor stops(String table, String[] columns, String selection, String selectionArgs, String groupBy, String having, String orderBy) {
-        return myDataBase.query("stops", new String[]{"_id,stop_name"},null,null,null,null,null);
+        MapsActivity mapsActivity=new MapsActivity();
+        return myDataBase.query("stops", new String[]{"stop_lat,stop_lon"},"stop_name=\"Mahdia\"",null,null,null,null);
     }
 
 }
