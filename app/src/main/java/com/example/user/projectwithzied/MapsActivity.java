@@ -36,6 +36,7 @@ import static android.graphics.Typeface.ITALIC;
 import static android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import static android.graphics.Typeface.BOLD;
 import static android.graphics.Typeface.ITALIC;
@@ -51,6 +52,9 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
     private Marker marker;
     public Double lon;
     public Double lat;
+    private Marker marker2;
+    private Marker marker3;
+    private Marker markerMahdia,markerEzzahra,markerBorjArif;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +88,7 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
 
         LatLng gare = new LatLng(35.5008333078298, 11.0644082609385);
         LatLng Mahdia = new LatLng(35.5008333078298, 11.0644082609385);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((Mahdia),10));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((Mahdia), 10));
         LatLng BorjArif = new LatLng(lat("Borj Arif"), lon("Borj Arif"));
         LatLng SM = new LatLng(lat("Sidi Massaoud"), lon("Sidi Massaoud"));
         LatLng MZT = new LatLng(lat("Mahdia Z.T."), lon("Mahdia Z.T."));
@@ -123,15 +127,15 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
         mMap.addMarker(new MarkerOptions().position(Mahdia).title("Marker in Mahdia"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(Mahdia));
 
-        mMap.addMarker(new MarkerOptions()
+      markerMahdia=  mMap.addMarker(new MarkerOptions()
                 .title("La Gare")
                 .snippet("The most wonderful.")
                 .position(Mahdia));
-        mMap.addMarker(new MarkerOptions()
+        markerEzzahra =  mMap.addMarker(new MarkerOptions()
                 .title("EZZAHRA")
                 .snippet("The most wonderful.")
                 .position(new LatLng(35.5000434191629, 11.0483183619427)));
-        mMap.addMarker(new MarkerOptions()
+      markerBorjArif=  mMap.addMarker(new MarkerOptions()
                 .title("borj arif")
                 .snippet("The most wonderful.")
                 .position(new LatLng(35.5061928462048, 11.0303670358646)));
@@ -247,7 +251,7 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
                 .title("Med V")
                 .snippet("The most wonderful.")
                 .position(MED5));
-        mMap.addMarker(new MarkerOptions()
+         mMap.addMarker(new MarkerOptions()
                 .title("Beb Jdid")
                 .snippet("The most wonderful.")
                 .position(BEBJDID));
@@ -298,28 +302,34 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
 
         );
         IconGenerator iconFactory = new IconGenerator(this);
+        iconFactory.setStyle(IconGenerator.STYLE_GREEN);
         addIcon(iconFactory, "Mahdia", Mahdia);
 
-        iconFactory.setColor(Color.CYAN);
+        iconFactory.setStyle(IconGenerator.STYLE_GREEN);
+        addIcon(iconFactory, "Beb Jdid", BEBJDID);
+
+        iconFactory.setStyle(IconGenerator.STYLE_BLUE);
         addIcon(iconFactory, "Baghdadi", BAGH);
 
-      //  iconFactory.setRotation(90);
+        //  iconFactory.setRotation(90);
         iconFactory.setStyle(IconGenerator.STYLE_RED);
         addIcon(iconFactory, "Teboulba", TBL);
 
-     //   iconFactory.setContentRotation(-90);
+        //   iconFactory.setContentRotation(-90);
         iconFactory.setStyle(IconGenerator.STYLE_PURPLE);
         addIcon(iconFactory, "Moknine", MKN);
 
-       // iconFactory.setRotation(0);
+        // iconFactory.setRotation(0);
         //iconFactory.setContentRotation(90);
         iconFactory.setStyle(IconGenerator.STYLE_GREEN);
         addIcon(iconFactory, "Gare H.Bourguiba", MONASTIR);
 
-      //  iconFactory.setRotation(0);
+        //  iconFactory.setRotation(0);
         //iconFactory.setContentRotation(0);
         iconFactory.setStyle(IconGenerator.STYLE_ORANGE);
         addIcon(iconFactory, "Borj Arif", BorjArif);
+     //   showDistance();
+        difference();
     }
 
     private CharSequence makeCharSequence() {
@@ -332,7 +342,41 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
         return ssb;
     }
 
+    private double showDistance(Marker m) {
+        double distance = SphericalUtil.computeDistanceBetween(getMarker().getPosition(), m.getPosition());
+      //  Toast.makeText(MapsActivity.this, "la distance est" + formatNumber(distance), Toast.LENGTH_LONG).show();
+        Log.d(TAG, "showDistance: "+formatNumber(distance));
+        return distance;
+    }
+    private void difference() {
+        double min;
+        int i = 1;
+        ArrayList<Marker> listM = new ArrayList<>();
+        listM.add(getMarker());
+        listM.add(markerMahdia);
+        listM.add(markerEzzahra);
+        listM.add(markerBorjArif);
+        min = showDistance(listM.get(i));
+        double next=showDistance(listM.get(i + 1));
+        if(( Double.valueOf(next)<Double.valueOf(min))&& (i<listM.size())) {
+            min=next;
+            i++;
+        }
+//Toast.makeText(MapsActivity.this,"la plus proche distance est"+formatNumber(min),Toast.LENGTH_LONG).show();
+        Toast.makeText(MapsActivity.this,"la plus proche station est"+" "+listM.get(i).getTitle(),Toast.LENGTH_LONG).show();
 
+    }
+    private String formatNumber(double distance) {
+        String unit = "m";
+        if (distance < 1) {
+            distance *= 1000;
+            unit = "mm";
+        } else if (distance > 1000) {
+            distance /= 1000;
+            unit = "km";
+        }
+        return String.format("%4.3f%s", distance, unit);
+    }
     public Double lat(String station)  {
         Double  lat = null;
         DataBaseHelper myDbHelper = new DataBaseHelper(MapsActivity.this);
