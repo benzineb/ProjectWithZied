@@ -35,6 +35,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -45,7 +46,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity  implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class MainActivity extends AppCompatActivity   {
     private String[] arraySpinner;
     static final int dp=0;
     static final int arr=0;
@@ -56,22 +57,16 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
     public static Integer IndexGareArrivee;
     public static Integer IndexGareDepart;
     public static  String headsign;
-    private GoogleApiClient mGoogleApiClient;
-    private LocationRequest mLocationRequest;
+
     public static String Tag="jabeur";
-   public Double lon;
-   public Double lat;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         final HashMap<String,List<Double>> temp = new HashMap<String,List<Double>>();
         final List<Double> values = new ArrayList<Double>();
-        mGoogleApiClient = new GoogleApiClient.Builder(this).addApi(LocationServices.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
-        Log.d(Tag, "onCreate:client créé");
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -225,65 +220,7 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
         }
         return headsign;
     }
-    @Override
-    public void onLocationChanged(Location location) {
-           lon = location.getLongitude();
-         lat = location.getLatitude();
-        Log.d(Tag, "onLocationChanged: ");
-        Toast.makeText(this, "longitude" + lon + "lattitude" + lat, Toast.LENGTH_LONG).show();
-    }
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        mLocationRequest = LocationRequest.create();
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setInterval(10000);
-        Log.d(Tag, "request:done");
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
 
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-    protected void onStart() {
-        super.onStart();
-        mGoogleApiClient.connect();
-        Toast.makeText(this, "client connecté", Toast.LENGTH_SHORT).show();
-    }
-    @Override
-
-    protected void onStop() {
-        super.onStop();
-        mGoogleApiClient.disconnect();
-    }
     public void printMap(HashMap mp) {
         Iterator it = mp.entrySet().iterator();
         while (it.hasNext()) {
@@ -294,13 +231,6 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
         }
     }
 
-    public Double getLon() {
-        return lon;
-    }
-
-    public Double getLat() {
-        return lat;
-    }
 }
 
 
