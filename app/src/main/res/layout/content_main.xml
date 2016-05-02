@@ -29,11 +29,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Gare de départ"
-
-
         android:id="@+id/depart"
         android:textStyle="bold"
-
         android:layout_marginTop="72dp"
         android:layout_below="@+id/title"
         android:layout_toRightOf="@+id/imageView2"
@@ -44,7 +41,6 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Gare d&apos;arrivée"
-
         android:textStyle="bold"
         android:id="@+id/arrivee"
         android:layout_above="@+id/spinnerarr"
@@ -86,7 +82,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/fleche_vert"
-
         android:id="@+id/imageView3"
         android:layout_below="@+id/spinner"
         android:layout_alignParentLeft="true"
@@ -99,56 +94,53 @@
         android:id="@+id/imageButton"
         android:background="@color/grey"
         android:src="@drawable/red_icon"
-
         android:layout_alignTop="@+id/imageView2"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
-    <RelativeLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:layout_below="@+id/spinnerarr">
 
-
-
-        <Button
-            style="@style/MyButton"
-            android:layout_width="260dp"
+        <LinearLayout
+            android:id="@+id/page_buttons"
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Partir maintenant"
-            android:textStyle="italic"
-            android:height="32dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:textSize="13pt"
-            android:background="@color/mauve"
-            android:id="@+id/maintenant"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignBottom="@+id/partirpl"
-            android:layout_alignTop="@+id/partirpl"
+            android:gravity="center_horizontal"
+            android:layout_alignParentBottom="true"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
+        >
+
+            <Button
+                style="@style/MyButton"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Partir maintenant"
+                android:textStyle="italic"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:textSize="13pt"
+                android:background="@color/mauve"
+                android:id="@+id/maintenant"
+                android:layout_marginRight="@dimen/button_margin"
+
 
             />
-        <Button style="@style/MyButton"
-            android:layout_width="260dp"
-            android:layout_height="wrap_content"
-            android:text="@string/plustard"
-            android:textColor="@color/white"
-            android:background="@color/green"
-            android:id="@+id/partirpl"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:textSize="13pt"
-            android:layout_gravity="right"
-            android:layout_centerVertical="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            <Button style="@style/MyButton"
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="@string/plustard"
+                    android:textColor="@color/white"
+                    android:background="@color/green"
+                    android:id="@+id/partirpl"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:layout_marginLeft="@dimen/button_margin"
+                    android:textSize="13pt"
+                   />
+        </LinearLayout>
 
-
-    </RelativeLayout>
 </RelativeLayout>
