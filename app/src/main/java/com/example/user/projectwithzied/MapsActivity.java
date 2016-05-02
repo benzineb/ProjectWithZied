@@ -37,6 +37,7 @@ import static android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static android.graphics.Typeface.BOLD;
 import static android.graphics.Typeface.ITALIC;
@@ -48,13 +49,13 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
     private GoogleMap mMap;
     private String TAG = "mapp";
     public String station;
-    Cursor mp = null;
+    private CameraPosition cp;
     private Marker marker;
     public Double lon;
     public Double lat;
-    private Marker marker2;
-    private Marker marker3;
     private Marker markerMahdia,markerEzzahra,markerBorjArif;
+    private Marker markerSidiMessaoud,markerBaghdadi,markerMahdiaZT,markerTeboulba,markerTeboulbaZI,markerBekalta,markerMonkine,markerMoknineGribaa,markerKsarHelal,markerKsarHelalZI,markerSayyada,markerLamta,
+            markerBouhdjar,markerKsiba,markerKhnis,markerFrina,markerMonastirZI,markerFac2,markerMonastir,markerFac,markerAeroport,markerHotels,markerSahlineSabkha,markerSahlineVille,markerSousseZI,markerDepot,markerSousseSud,markerMed5,markerBebJdid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +65,15 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        if (savedInstanceState == null) {
+            // First incarnation of this activity.
+            mapFragment.setRetainInstance(true);
+        } else {
+            // Reincarnated activity. The obtained map is the same map instance in the previous
+            // activity life cycle. There is no need to reinitialize it.
+            mMap = mapFragment.getMap();
+        }
+        setUpMapIfNeeded();
         mGoogleApiClient = new GoogleApiClient.Builder(this).addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -119,7 +129,7 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
         LatLng SOUSSESUD = new LatLng(lat("Sousse Sud"), lon("Sousse Sud"));
         LatLng MED5 = new LatLng(lat("Sousse Mohamed V"), lon("Sousse Mohamed V"));
         LatLng BEBJDID = new LatLng(lat("Sousse Bab Jédid"), lon("Sousse Bab Jédid"));
-        CameraPosition cameraPosition = CameraPosition.builder()
+        CameraPosition cp = CameraPosition.builder()
                 .target(gare)
                 .zoom(200)
                 .bearing(90)
@@ -131,6 +141,7 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
                 .title("La Gare")
                 .snippet("The most wonderful.")
                 .position(Mahdia));
+
         markerEzzahra =  mMap.addMarker(new MarkerOptions()
                 .title("EZZAHRA")
                 .snippet("The most wonderful.")
@@ -139,119 +150,119 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
                 .title("borj arif")
                 .snippet("The most wonderful.")
                 .position(new LatLng(35.5061928462048, 11.0303670358646)));
-        mMap.addMarker(new MarkerOptions()
+       markerSidiMessaoud= mMap.addMarker(new MarkerOptions()
                 .title("sidi messaoud")
                 .snippet("The most wonderful.")
                 .position(new LatLng(35.5210715684533, 11.02721426692)));
-        mMap.addMarker(new MarkerOptions()
+        markerMahdiaZT=mMap.addMarker(new MarkerOptions()
                 .title("Mahdia Zone Touristique")
                 .snippet("The most wonderful.")
                 .position(MZT));
-        mMap.addMarker(new MarkerOptions()
+      markerBaghdadi=  mMap.addMarker(new MarkerOptions()
                 .title("BAGHDADI")
                 .snippet("The most wonderful.")
                 .position(BAGH));
-        mMap.addMarker(new MarkerOptions()
+        markerBekalta=  mMap.addMarker(new MarkerOptions()
                 .title("Bekalta")
                 .snippet("The most wonderful.")
                 .position(BKLT));
-        mMap.addMarker(new MarkerOptions()
+        markerTeboulba= mMap.addMarker(new MarkerOptions()
                 .title("Teboulba")
                 .snippet("The most wonderful.")
                 .position(TBL));
-        mMap.addMarker(new MarkerOptions()
+        markerTeboulbaZI=  mMap.addMarker(new MarkerOptions()
                 .title("Teboulba Zone Indistruelle")
                 .snippet("The most wonderful.")
                 .position(TBLZI));
-        mMap.addMarker(new MarkerOptions()
+        markerMonkine= mMap.addMarker(new MarkerOptions()
                 .title("Moknine")
                 .snippet("The most wonderful.")
                 .position(MKN));
-        mMap.addMarker(new MarkerOptions()
+        markerMoknineGribaa=mMap.addMarker(new MarkerOptions()
                 .title("Moknine Gribaa")
                 .snippet("The most wonderful.")
                 .position(MKNG));
-        mMap.addMarker(new MarkerOptions()
+        markerKsarHelal= mMap.addMarker(new MarkerOptions()
                 .title("Ksar Helal")
                 .snippet("The most wonderful.")
                 .position(KH));
-        mMap.addMarker(new MarkerOptions()
+        markerKsarHelalZI=mMap.addMarker(new MarkerOptions()
                 .title("Ksar Helal Zone Indistruelle")
                 .snippet("The most wonderful.")
                 .position(KHZI));
-        mMap.addMarker(new MarkerOptions()
+        markerSayyada= mMap.addMarker(new MarkerOptions()
                 .title("Sayyada")
                 .snippet("The most wonderful.")
                 .position(SAYADA));
-        mMap.addMarker(new MarkerOptions()
+        markerLamta= mMap.addMarker(new MarkerOptions()
                 .title("Lamta")
                 .snippet("The most wonderful.")
                 .position(LAMTA));
-        mMap.addMarker(new MarkerOptions()
+        markerBouhdjar= mMap.addMarker(new MarkerOptions()
                 .title("Bouhdjar")
                 .snippet("The most wonderful.")
                 .position(BOUHDJAR));
-        mMap.addMarker(new MarkerOptions()
+        markerKsiba= mMap.addMarker(new MarkerOptions()
                 .title("Ksiba")
                 .snippet("The most wonderful.")
                 .position(KSIBA));
-        mMap.addMarker(new MarkerOptions()
+        markerKhnis= mMap.addMarker(new MarkerOptions()
                 .title("Khnis")
                 .snippet("The most wonderful.")
                 .position(KHNIS));
-        mMap.addMarker(new MarkerOptions()
+        markerFrina=  mMap.addMarker(new MarkerOptions()
                 .title("Frina")
                 .snippet("The most wonderful.")
                 .position(FRINA));
-        mMap.addMarker(new MarkerOptions()
+        markerMonastirZI= mMap.addMarker(new MarkerOptions()
                 .title("Monastir Zone Indistruelle")
                 .snippet("The most wonderful.")
                 .position(MONASTIRZI));
-        mMap.addMarker(new MarkerOptions()
+        markerFac2=  mMap.addMarker(new MarkerOptions()
                 .title("Faculté 2")
                 .snippet("The most wonderful.")
                 .position(FAC2));
-        mMap.addMarker(new MarkerOptions()
+        markerMonastir=  mMap.addMarker(new MarkerOptions()
                 .title("Monastir")
                 .snippet("The most wonderful.")
                 .position(MONASTIR));
-        mMap.addMarker(new MarkerOptions()
+        markerFac= mMap.addMarker(new MarkerOptions()
                 .title("Faculté")
                 .snippet("The most wonderful.")
                 .position(FAC));
-        mMap.addMarker(new MarkerOptions()
+        markerAeroport=  mMap.addMarker(new MarkerOptions()
                 .title("Aeroport")
                 .snippet("The most wonderful.")
                 .position(AEROPORT));
-        mMap.addMarker(new MarkerOptions()
+        markerHotels= mMap.addMarker(new MarkerOptions()
                 .title("Les Hotels")
                 .snippet("The most wonderful.")
                 .position(HOTELS));
-        mMap.addMarker(new MarkerOptions()
+        markerSahlineSabkha=  mMap.addMarker(new MarkerOptions()
                 .title("Sahline Ville")
                 .snippet("The most wonderful.")
                 .position(SAHLINESABKHA));
-        mMap.addMarker(new MarkerOptions()
+        markerSahlineVille= mMap.addMarker(new MarkerOptions()
                 .title("Sahline Ville")
                 .snippet("The most wonderful.")
                 .position(SAHLINEVILLE));
-        mMap.addMarker(new MarkerOptions()
+        markerSousseZI=  mMap.addMarker(new MarkerOptions()
                 .title("Sousse Zone Industrielle")
                 .snippet("The most wonderful.")
                 .position(SOUSSEZI));
-        mMap.addMarker(new MarkerOptions()
+        markerDepot=    mMap.addMarker(new MarkerOptions()
                 .title("Depot")
                 .snippet("The most wonderful.")
                 .position(DEPOT));
-        mMap.addMarker(new MarkerOptions()
+        markerSousseSud= mMap.addMarker(new MarkerOptions()
                 .title("Sousse Sud")
                 .snippet("The most wonderful.")
                 .position(SOUSSESUD));
-        mMap.addMarker(new MarkerOptions()
+        markerMed5= mMap.addMarker(new MarkerOptions()
                 .title("Med V")
                 .snippet("The most wonderful.")
                 .position(MED5));
-         mMap.addMarker(new MarkerOptions()
+        markerBebJdid=  mMap.addMarker(new MarkerOptions()
                 .title("Beb Jdid")
                 .snippet("The most wonderful.")
                 .position(BEBJDID));
@@ -301,14 +312,17 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
                 .add(BEBJDID)//beb Jdid
 
         );
+        String depar,arriv;
+        depar=mainActivity.getGareDepart();
+        arriv=mainActivity.getGareArrivee();
         IconGenerator iconFactory = new IconGenerator(this);
-        iconFactory.setStyle(IconGenerator.STYLE_GREEN);
-        addIcon(iconFactory, "Mahdia", Mahdia);
+        iconFactory.setStyle(IconGenerator.STYLE_RED);
+        addIcon(iconFactory,depar,new LatLng(lat(depar),lon(depar)));
 
         iconFactory.setStyle(IconGenerator.STYLE_GREEN);
-        addIcon(iconFactory, "Beb Jdid", BEBJDID);
+        addIcon(iconFactory,arriv,new LatLng(lat(arriv),lon(arriv)));
 
-        iconFactory.setStyle(IconGenerator.STYLE_BLUE);
+     /*   iconFactory.setStyle(IconGenerator.STYLE_BLUE);
         addIcon(iconFactory, "Baghdadi", BAGH);
 
         //  iconFactory.setRotation(90);
@@ -327,7 +341,7 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
         //  iconFactory.setRotation(0);
         //iconFactory.setContentRotation(0);
         iconFactory.setStyle(IconGenerator.STYLE_ORANGE);
-        addIcon(iconFactory, "Borj Arif", BorjArif);
+        addIcon(iconFactory, "Borj Arif", BorjArif);*/
      //   showDistance();
         difference();
     }
@@ -349,21 +363,30 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
         return distance;
     }
     private void difference() {
-        double min;
-        int i = 1;
+        double next;
+        String minName="";
+        int i = 0;
+        double mindist=0.00;
         ArrayList<Marker> listM = new ArrayList<>();
-        listM.add(getMarker());
+     //   listM.add(getMarker());
         listM.add(markerMahdia);
-        listM.add(markerEzzahra);
         listM.add(markerBorjArif);
-        min = showDistance(listM.get(i));
-        double next=showDistance(listM.get(i + 1));
-        if(( Double.valueOf(next)<Double.valueOf(min))&& (i<listM.size())) {
-            min=next;
-            i++;
-        }
-//Toast.makeText(MapsActivity.this,"la plus proche distance est"+formatNumber(min),Toast.LENGTH_LONG).show();
-        Toast.makeText(MapsActivity.this,"la plus proche station est"+" "+listM.get(i).getTitle(),Toast.LENGTH_LONG).show();
+        listM.add(markerEzzahra);
+     /*   Marker[] other=new Marker[]{ markerSidiMessaoud,markerBaghdadi,markerMahdiaZT,markerTeboulba,markerTeboulbaZI,markerBekalta,markerMonkine,markerMoknineGribaa,markerKsarHelal,markerKsarHelalZI,markerSayyada,markerLamta,
+                markerBouhdjar,markerKsiba,markerKhnis,markerFrina,markerMonastirZI,markerFac2,markerMonastir,markerFac,markerAeroport,markerHotels,markerSahlineSabkha,markerSahlineVille,markerSousseZI,markerDepot,markerSousseSud,markerMed5,markerBebJdid};*/
+        listM.addAll(Arrays.asList(markerSidiMessaoud,markerBaghdadi,markerMahdiaZT,markerTeboulba,markerTeboulbaZI,markerBekalta,markerMonkine,markerMoknineGribaa,markerKsarHelal,markerKsarHelalZI,markerSayyada,markerLamta,
+                markerBouhdjar,markerKsiba,markerKhnis,markerFrina,markerMonastirZI,markerFac2,markerMonastir,markerFac,markerAeroport,markerHotels,markerSahlineSabkha,markerSahlineVille,markerSousseZI,markerDepot,markerSousseSud,markerMed5,markerBebJdid));
+        mindist = showDistance(listM.get(0));
+        minName=listM.get(0).getTitle();
+        for (i=0;i<listM.size()-1;i++) {
+               next=showDistance(listM.get(i + 1));
+               if ((Double.valueOf(next) < Double.valueOf(mindist))) {
+                   mindist = next;
+                   minName = listM.get(i + 1).getTitle();
+               }
+           }
+Toast.makeText(MapsActivity.this,"la plus proche distance est"+formatNumber(mindist),Toast.LENGTH_LONG).show();
+        Toast.makeText(MapsActivity.this,"la plus proche station est"+" "+minName,Toast.LENGTH_LONG).show();
 
     }
     private String formatNumber(double distance) {
@@ -541,5 +564,15 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
 
         mMap.addMarker(markerOptions);
     }
+    private void setUpMapIfNeeded() {
+        if (mMap == null) {
+            mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
+                    .getMap();
+            if (mMap != null) {
+                onMapReady(getmMap());
+            }
+        }
+    }
+
 }
 
