@@ -14,7 +14,8 @@
         android:layout_width="fill_parent"
         android:gravity="center"
         android:layout_height="wrap_content"
-        android:text="Departure Time"
+        android:text="Métro Parti"
+
         android:textSize="30sp"
         />
 

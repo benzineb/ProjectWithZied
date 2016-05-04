@@ -42,6 +42,7 @@ import java.util.Arrays;
 import static android.graphics.Typeface.BOLD;
 import static android.graphics.Typeface.ITALIC;
 import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
+import static com.example.user.projectwithzied.R.drawable.ic_maps_directions_walk;
 
 public class MapsActivity extends FragmentActivity  implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     private GoogleApiClient mGoogleApiClient;
@@ -53,7 +54,7 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
     private Marker marker;
     public Double lon;
     public Double lat;
-    private Marker markerMahdia,markerEzzahra,markerBorjArif;
+    private Marker markerGare,markerEzzahra,markerBorjArif;
     private Marker markerSidiMessaoud,markerBaghdadi,markerMahdiaZT,markerTeboulba,markerTeboulbaZI,markerBekalta,markerMonkine,markerMoknineGribaa,markerKsarHelal,markerKsarHelalZI,markerSayyada,markerLamta,
             markerBouhdjar,markerKsiba,markerKhnis,markerFrina,markerMonastirZI,markerFac2,markerMonastir,markerFac,markerAeroport,markerHotels,markerSahlineSabkha,markerSahlineVille,markerSousseZI,markerDepot,markerSousseSud,markerMed5,markerBebJdid;
 
@@ -129,18 +130,16 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
         LatLng SOUSSESUD = new LatLng(lat("Sousse Sud"), lon("Sousse Sud"));
         LatLng MED5 = new LatLng(lat("Sousse Mohamed V"), lon("Sousse Mohamed V"));
         LatLng BEBJDID = new LatLng(lat("Sousse Bab Jédid"), lon("Sousse Bab Jédid"));
-        CameraPosition cp = CameraPosition.builder()
-                .target(gare)
-                .zoom(200)
-                .bearing(90)
-                .build();
-        mMap.addMarker(new MarkerOptions().position(Mahdia).title("Marker in Mahdia"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(Mahdia));
 
-      markerMahdia=  mMap.addMarker(new MarkerOptions()
-                .title("La Gare")
+        markerGare = mMap.addMarker(new MarkerOptions().position(Mahdia).title("Marker in Gare Mahdia"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(Mahdia));
+        markerGare.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_metro_512));
+
+        mMap.addMarker(new MarkerOptions()
+                .title("Mahdia")
                 .snippet("The most wonderful.")
                 .position(Mahdia));
+
 
         markerEzzahra =  mMap.addMarker(new MarkerOptions()
                 .title("EZZAHRA")
@@ -218,6 +217,8 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
                 .title("Monastir Zone Indistruelle")
                 .snippet("The most wonderful.")
                 .position(MONASTIRZI));
+        markerMonastir.setIcon(BitmapDescriptorFactory.fromResource(ic_maps_directions_walk));
+
         markerFac2=  mMap.addMarker(new MarkerOptions()
                 .title("Faculté 2")
                 .snippet("The most wonderful.")
@@ -266,9 +267,11 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
                 .title("Beb Jdid")
                 .snippet("The most wonderful.")
                 .position(BEBJDID));
+        markerBebJdid.setIcon(BitmapDescriptorFactory.fromResource(ic_maps_directions_walk));
+
         MainActivity mainActivity = new MainActivity();
         marker = mMap.addMarker(new MarkerOptions().title("Vous êtes ici").position(new LatLng(0, 0)));
-
+       marker.setIcon(BitmapDescriptorFactory.fromResource(ic_maps_directions_walk));
         // Polylines are useful for marking paths and routes on the map.
         mMap.addPolyline(new PolylineOptions().geodesic(true)
                 .add(new LatLng(35.5008333078298, 11.0644082609385))  // La gare
@@ -315,6 +318,11 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
         String depar,arriv;
         depar=mainActivity.getGareDepart();
         arriv=mainActivity.getGareArrivee();
+        CameraPosition cp = CameraPosition.builder()
+                .target(new LatLng(lat(depar),lon(depar)))
+                .zoom(500)
+                .bearing(90)
+                .build();
         IconGenerator iconFactory = new IconGenerator(this);
         iconFactory.setStyle(IconGenerator.STYLE_RED);
         addIcon(iconFactory,depar,new LatLng(lat(depar),lon(depar)));
@@ -322,10 +330,10 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
         iconFactory.setStyle(IconGenerator.STYLE_GREEN);
         addIcon(iconFactory,arriv,new LatLng(lat(arriv),lon(arriv)));
 
-     /*   iconFactory.setStyle(IconGenerator.STYLE_BLUE);
+        iconFactory.setStyle(IconGenerator.STYLE_BLUE);
         addIcon(iconFactory, "Baghdadi", BAGH);
 
-        //  iconFactory.setRotation(90);
+    /*    //  iconFactory.setRotation(90);
         iconFactory.setStyle(IconGenerator.STYLE_RED);
         addIcon(iconFactory, "Teboulba", TBL);
 
@@ -369,7 +377,7 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
         double mindist=0.00;
         ArrayList<Marker> listM = new ArrayList<>();
      //   listM.add(getMarker());
-        listM.add(markerMahdia);
+        listM.add(markerGare);
         listM.add(markerBorjArif);
         listM.add(markerEzzahra);
      /*   Marker[] other=new Marker[]{ markerSidiMessaoud,markerBaghdadi,markerMahdiaZT,markerTeboulba,markerTeboulbaZI,markerBekalta,markerMonkine,markerMoknineGribaa,markerKsarHelal,markerKsarHelalZI,markerSayyada,markerLamta,

@@ -1,35 +1,27 @@
 package com.example.user.projectwithzied;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.ConnectivityManager;
-import android.nfc.Tag;
-import android.os.Handler;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.user.projectwithzied.dummy.CustomCursorAdapter;
+import com.example.user.projectwithzied.dummy.CustomCursorAdapterStat;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class Horaires extends HorairesStat {
-    private CustomCursorAdapter customAdapter;
+public class HorairesStat extends Activity {
+    private CustomCursorAdapterStat customAdapter;
     private CustomCursorAdapter customAdapters;
     private DataBaseHelper databaseHelper;
     private static final int ENTER_DATA_REQUEST_CODE = 1;
     private ListView listView;
-    private static final String TAG = Horaires.class.getSimpleName();
+    private static final String TAG = HorairesStat.class.getSimpleName();
     private Cursor c=null;
     private Cursor cur=null;
     private final String Tag="jab";
@@ -39,7 +31,7 @@ public class Horaires extends HorairesStat {
         setContentView(R.layout.list_view_horaires);
 
 
-        DataBaseHelper myDbHelper = new DataBaseHelper(Horaires.this);
+        DataBaseHelper myDbHelper = new DataBaseHelper(HorairesStat.this);
         try {
 
             myDbHelper.createDataBase();
@@ -62,7 +54,7 @@ public class Horaires extends HorairesStat {
                 e.printStackTrace();
             }
         }
-        Toast.makeText(Horaires.this, "success", Toast.LENGTH_SHORT).show();
+        Toast.makeText(HorairesStat.this, "success", Toast.LENGTH_SHORT).show();
             listView = (ListView) findViewById(R.id.list_data);
         SQLiteDatabase db = myDbHelper.getReadableDatabase();
         MainActivity mainActivity = new MainActivity();
@@ -80,19 +72,7 @@ public class Horaires extends HorairesStat {
         }
 
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                   if (isOnline()==false){
-                    Toast.makeText(Horaires.this,"Vérifier connexion internet",Toast.LENGTH_LONG).show();
-                   }else {
-                       Log.d(TAG, "clicked on item: " + position);
-                       Intent map = new Intent(Horaires.this, MapsActivity.class);
-                       startActivity(map);
-                   }
-                }
-            });
 
             // Database query can be a time consuming task ..
             // so its safe to call database query in another thread
@@ -101,16 +81,10 @@ public class Horaires extends HorairesStat {
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
-                    customAdapter = new CustomCursorAdapter(Horaires.this,cur);
+                    customAdapter =  new CustomCursorAdapterStat(HorairesStat.this,cur);
                     listView.setAdapter(customAdapter);
                 }
             });
     }
-    public boolean isOnline() {
-        ConnectivityManager cm =
-                (ConnectivityManager) getSystemService(Horaires.CONNECTIVITY_SERVICE);
 
-        return cm.getActiveNetworkInfo() != null &&
-                cm.getActiveNetworkInfo().isConnectedOrConnecting();
-    }
 }

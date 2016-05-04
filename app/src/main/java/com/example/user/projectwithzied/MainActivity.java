@@ -131,46 +131,43 @@ public class MainActivity extends AppCompatActivity   {
 
 
     partir.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
 
-            if (dep.getSelectedItem() == arr.getSelectedItem()) {
+                if (dep.getSelectedItem() == arr.getSelectedItem()) {
 
-                Toast.makeText(MainActivity.this, "la station du départ doit être differente de l'arrivée ", Toast.LENGTH_LONG).show();
-            } else {
-                GareDepart = dep.getSelectedItem().toString();
-                GareArrivee = arr.getSelectedItem().toString();
-                IndexGareDepart = dep.getSelectedItemPosition();
-                IndexGareArrivee = arr.getSelectedItemPosition();
-                DataBaseHelper myDbHelper = new DataBaseHelper(MainActivity.this);
-                Horaires horaires=new Horaires();
-                Intent horaire=new Intent(MainActivity.this,Horaires.class);
-                startActivity(horaire);
-
-
-
-
-    /*           if (cMap.moveToFirst()) {
-                    do {
-                       values.add(cMap.getDouble(1));
-                        values.add(cMap.getDouble(2));
-                      temp.put(cMap.getString(0),values);
-
-                       Toast.makeText(MainActivity.this,
-                                "name"+cMap.getString(0)+"\n"+
-                                "longitude=" + cMap.getDouble(1)+
-                                        "largitude"+cMap.getString(2)
-                                , Toast.LENGTH_LONG).show();
-                       Log.d(Tag, "cMap:"+c.getString(0));
-                    } while (cMap.moveToNext());
-
+                    Toast.makeText(MainActivity.this, "la station du départ doit être differente de l'arrivée ", Toast.LENGTH_LONG).show();
+                } else {
+                    GareDepart = dep.getSelectedItem().toString();
+                    GareArrivee = arr.getSelectedItem().toString();
+                    IndexGareDepart = dep.getSelectedItemPosition();
+                    IndexGareArrivee = arr.getSelectedItemPosition();
+                    DataBaseHelper myDbHelper = new DataBaseHelper(MainActivity.this);
+                    Horaires horaires=new Horaires();
+                    Intent horaire=new Intent(MainActivity.this,Horaires.class);
+                    startActivity(horaire);
                 }
-                printMap(temp);
-                Log.d(Tag, "hashmap: ");*/
-
             }
-        }
-    });
+        });
+        partirpl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v2) {
+
+                if (dep.getSelectedItem() == arr.getSelectedItem()) {
+
+                    Toast.makeText(MainActivity.this, "la station du départ doit être differente de l'arrivée ", Toast.LENGTH_LONG).show();
+                } else {
+                    GareDepart = dep.getSelectedItem().toString();
+                    GareArrivee = arr.getSelectedItem().toString();
+                    IndexGareDepart = dep.getSelectedItemPosition();
+                    IndexGareArrivee = arr.getSelectedItemPosition();
+                    DataBaseHelper myDbHelper = new DataBaseHelper(MainActivity.this);
+                    Horaires horaires=new Horaires();
+                    Intent horairest=new Intent(MainActivity.this,HorairesStat.class);
+                    startActivity(horairest);
+                }
+            }
+        });
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
