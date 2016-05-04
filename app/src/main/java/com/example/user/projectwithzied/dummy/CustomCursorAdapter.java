@@ -31,6 +31,8 @@ public class CustomCursorAdapter extends CustomCursorAdapterStat {
         super(context, c);
     }
 
+
+
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         java.sql.Time timeValueFromCuror = null;
@@ -58,8 +60,14 @@ public class CustomCursorAdapter extends CustomCursorAdapterStat {
         TextView textViewPersonName = (TextView) view.findViewById(R.id.dep);
      if(timeValueFromCuror.after(timeValueNow)) {
          textViewPersonName.setText(cursor.getString(cursor.getColumnIndex(cursor.getColumnName(1))));
-         textViewPersonName.setTextColor(R.color.red);
+         textViewPersonName.setTextColor(R.color.mauve);
          Log.d(Tag, "bindViewcursor: " + cursor.getString(1));
+
+     }else
+     {
+         textViewPersonName.setText(cursor.getString(cursor.getColumnIndex(cursor.getColumnName(1)))+"    "+"Parti");
+
+
      }
 
         // String txt=cursor.getString( cursor.getColumnIndex( MyTable.COLUMN_TITLE ) )

@@ -1,6 +1,7 @@
 package com.example.user.projectwithzied;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -14,6 +15,7 @@ import android.support.v4.app.FragmentActivity;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -36,13 +38,18 @@ import static android.graphics.Typeface.ITALIC;
 import static android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 
 import static android.graphics.Typeface.BOLD;
 import static android.graphics.Typeface.ITALIC;
 import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 import static com.example.user.projectwithzied.R.drawable.ic_maps_directions_walk;
+import static com.example.user.projectwithzied.R.drawable.ic_metro_512;
 
 public class MapsActivity extends FragmentActivity  implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     private GoogleApiClient mGoogleApiClient;
@@ -51,21 +58,27 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
     private String TAG = "mapp";
     public String station;
     private CameraPosition cp;
-    private Marker marker;
-    public Double lon;
-    public Double lat;
-    private Marker markerGare,markerEzzahra,markerBorjArif;
+    private TextView mTextView;
+    public Double lon,lat;
+    private Marker markerGare,markerEzzahra,markerBorjArif,marker;
     private Marker markerSidiMessaoud,markerBaghdadi,markerMahdiaZT,markerTeboulba,markerTeboulbaZI,markerBekalta,markerMonkine,markerMoknineGribaa,markerKsarHelal,markerKsarHelalZI,markerSayyada,markerLamta,
             markerBouhdjar,markerKsiba,markerKhnis,markerFrina,markerMonastirZI,markerFac2,markerMonastir,markerFac,markerAeroport,markerHotels,markerSahlineSabkha,markerSahlineVille,markerSousseZI,markerDepot,markerSousseSud,markerMed5,markerBebJdid;
+public String minName;
+    private TextView mTextViewTime;
 
+    protected int getLayoutId() {
+        return R.layout.maps_layout;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+        setContentView(getLayoutId());
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        mTextView = (TextView) findViewById(R.id.station);
+        mTextViewTime = (TextView) findViewById(R.id.temp);
         if (savedInstanceState == null) {
             // First incarnation of this activity.
             mapFragment.setRetainInstance(true);
@@ -80,6 +93,7 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
                 .addOnConnectionFailedListener(this)
                 .build();
         Log.d(TAG, "onCreate:client créé");
+
     }
 
 
@@ -131,15 +145,16 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
         LatLng MED5 = new LatLng(lat("Sousse Mohamed V"), lon("Sousse Mohamed V"));
         LatLng BEBJDID = new LatLng(lat("Sousse Bab Jédid"), lon("Sousse Bab Jédid"));
 
-        markerGare = mMap.addMarker(new MarkerOptions().position(Mahdia).title("Marker in Gare Mahdia"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(Mahdia));
-        markerGare.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_metro_512));
 
-        mMap.addMarker(new MarkerOptions()
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(Mahdia));
+
+
+      markerGare=  mMap.addMarker(new MarkerOptions()
                 .title("Mahdia")
                 .snippet("The most wonderful.")
                 .position(Mahdia));
-
+        markerGare.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_metro_512));
+//markerGare.setVisible(false);
 
         markerEzzahra =  mMap.addMarker(new MarkerOptions()
                 .title("EZZAHRA")
@@ -217,7 +232,6 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
                 .title("Monastir Zone Indistruelle")
                 .snippet("The most wonderful.")
                 .position(MONASTIRZI));
-        markerMonastir.setIcon(BitmapDescriptorFactory.fromResource(ic_maps_directions_walk));
 
         markerFac2=  mMap.addMarker(new MarkerOptions()
                 .title("Faculté 2")
@@ -227,6 +241,8 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
                 .title("Monastir")
                 .snippet("The most wonderful.")
                 .position(MONASTIR));
+        markerMonastir.setIcon(BitmapDescriptorFactory.fromResource(ic_metro_512));
+
         markerFac= mMap.addMarker(new MarkerOptions()
                 .title("Faculté")
                 .snippet("The most wonderful.")
@@ -267,7 +283,7 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
                 .title("Beb Jdid")
                 .snippet("The most wonderful.")
                 .position(BEBJDID));
-        markerBebJdid.setIcon(BitmapDescriptorFactory.fromResource(ic_maps_directions_walk));
+        markerBebJdid.setIcon(BitmapDescriptorFactory.fromResource(ic_metro_512));
 
         MainActivity mainActivity = new MainActivity();
         marker = mMap.addMarker(new MarkerOptions().title("Vous êtes ici").position(new LatLng(0, 0)));
@@ -320,7 +336,7 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
         arriv=mainActivity.getGareArrivee();
         CameraPosition cp = CameraPosition.builder()
                 .target(new LatLng(lat(depar),lon(depar)))
-                .zoom(500)
+                .zoom(50000000)
                 .bearing(90)
                 .build();
         IconGenerator iconFactory = new IconGenerator(this);
@@ -330,8 +346,8 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
         iconFactory.setStyle(IconGenerator.STYLE_GREEN);
         addIcon(iconFactory,arriv,new LatLng(lat(arriv),lon(arriv)));
 
-        iconFactory.setStyle(IconGenerator.STYLE_BLUE);
-        addIcon(iconFactory, "Baghdadi", BAGH);
+       /* iconFactory.setStyle(IconGenerator.STYLE_BLUE);
+        addIcon(iconFactory, "Baghdadi", BAGH);*/
 
     /*    //  iconFactory.setRotation(90);
         iconFactory.setStyle(IconGenerator.STYLE_RED);
@@ -354,15 +370,7 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
         difference();
     }
 
-    private CharSequence makeCharSequence() {
-        String prefix = "Mixing ";
-        String suffix = "different fonts";
-        String sequence = prefix + suffix;
-        SpannableStringBuilder ssb = new SpannableStringBuilder(sequence);
-        ssb.setSpan(new StyleSpan(ITALIC), 0, prefix.length(), SPAN_EXCLUSIVE_EXCLUSIVE);
-        ssb.setSpan(new StyleSpan(BOLD), prefix.length(), sequence.length(), SPAN_EXCLUSIVE_EXCLUSIVE);
-        return ssb;
-    }
+
 
     private double showDistance(Marker m) {
         double distance = SphericalUtil.computeDistanceBetween(getMarker().getPosition(), m.getPosition());
@@ -372,7 +380,7 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
     }
     private void difference() {
         double next;
-        String minName="";
+         minName="";
         int i = 0;
         double mindist=0.00;
         ArrayList<Marker> listM = new ArrayList<>();
@@ -380,8 +388,6 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
         listM.add(markerGare);
         listM.add(markerBorjArif);
         listM.add(markerEzzahra);
-     /*   Marker[] other=new Marker[]{ markerSidiMessaoud,markerBaghdadi,markerMahdiaZT,markerTeboulba,markerTeboulbaZI,markerBekalta,markerMonkine,markerMoknineGribaa,markerKsarHelal,markerKsarHelalZI,markerSayyada,markerLamta,
-                markerBouhdjar,markerKsiba,markerKhnis,markerFrina,markerMonastirZI,markerFac2,markerMonastir,markerFac,markerAeroport,markerHotels,markerSahlineSabkha,markerSahlineVille,markerSousseZI,markerDepot,markerSousseSud,markerMed5,markerBebJdid};*/
         listM.addAll(Arrays.asList(markerSidiMessaoud,markerBaghdadi,markerMahdiaZT,markerTeboulba,markerTeboulbaZI,markerBekalta,markerMonkine,markerMoknineGribaa,markerKsarHelal,markerKsarHelalZI,markerSayyada,markerLamta,
                 markerBouhdjar,markerKsiba,markerKhnis,markerFrina,markerMonastirZI,markerFac2,markerMonastir,markerFac,markerAeroport,markerHotels,markerSahlineSabkha,markerSahlineVille,markerSousseZI,markerDepot,markerSousseSud,markerMed5,markerBebJdid));
         mindist = showDistance(listM.get(0));
@@ -393,9 +399,44 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
                    minName = listM.get(i + 1).getTitle();
                }
            }
+        java.sql.Time timeValueFromCuror = null;
+        java.sql.Time timeValueNow = null;
+        Intent intent = getIntent();
+        Bundle bd = intent.getExtras();
+        String getTime = (String) bd.get("tempDeDepart");
+        DateFormat formatter = new SimpleDateFormat("HH:mm");
+        String timeStamp = formatter.format(Calendar.getInstance().getTime());
+        try {
+            timeValueNow = new java.sql.Time(formatter.parse(timeStamp).getTime());
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        try {
+            timeValueFromCuror = new java.sql.Time(formatter.parse(getTime).getTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        long ecartEnMinutes = ( timeValueFromCuror.getTime()-timeValueNow.getTime() ) / 60000;
+        Log.d(TAG, "difference de temp: "+ecartEnMinutes);
 Toast.makeText(MapsActivity.this,"la plus proche distance est"+formatNumber(mindist),Toast.LENGTH_LONG).show();
+        mTextView.setText(makeCharSequence("La Plus Proche Station est ",minName));
+        if(timeValueFromCuror.after(timeValueNow)) {
+            mTextViewTime.setText(makeCharSequence("Il Vous Reste:" + " ", String.valueOf(ecartEnMinutes + " " + "Minutes")));
+        }
+        Log.d(TAG, "text: "+mTextView);
         Toast.makeText(MapsActivity.this,"la plus proche station est"+" "+minName,Toast.LENGTH_LONG).show();
 
+    }
+    private CharSequence makeCharSequence(String prefix,String suffix) {
+       // String prefix = "La Plus Proche Station est: ";
+       // String suffix = minName;
+        String sequence = prefix + suffix;
+        SpannableStringBuilder ssb = new SpannableStringBuilder(sequence);
+        ssb.setSpan(new StyleSpan(ITALIC), 0, prefix.length(), SPAN_EXCLUSIVE_EXCLUSIVE);
+        ssb.setSpan(new StyleSpan(BOLD), prefix.length(), sequence.length(), SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        return ssb;
     }
     private String formatNumber(double distance) {
         String unit = "m";
@@ -581,6 +622,7 @@ Toast.makeText(MapsActivity.this,"la plus proche distance est"+formatNumber(mind
             }
         }
     }
+
 
 }
 
