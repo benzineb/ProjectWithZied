@@ -1,17 +1,24 @@
 package com.example.user.projectwithzied;
 
 import android.Manifest;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NotificationCompat;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
 import android.util.Log;
@@ -44,10 +51,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static android.graphics.Typeface.BOLD;
 import static android.graphics.Typeface.ITALIC;
 import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
+import static com.example.user.projectwithzied.R.drawable.abc_scrubber_primary_mtrl_alpha;
 import static com.example.user.projectwithzied.R.drawable.ic_maps_directions_walk;
 import static com.example.user.projectwithzied.R.drawable.ic_metro_512;
 
@@ -64,6 +75,11 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
     private Marker markerSidiMessaoud,markerBaghdadi,markerMahdiaZT,markerTeboulba,markerTeboulbaZI,markerBekalta,markerMonkine,markerMoknineGribaa,markerKsarHelal,markerKsarHelalZI,markerSayyada,markerLamta,
             markerBouhdjar,markerKsiba,markerKhnis,markerFrina,markerMonastirZI,markerFac2,markerMonastir,markerFac,markerAeroport,markerHotels,markerSahlineSabkha,markerSahlineVille,markerSousseZI,markerDepot,markerSousseSud,markerMed5,markerBebJdid;
 public String minName;
+    Timer timer;
+    TimerTask task;
+
+    private int counter;
+    String TimeLabel;
     private TextView mTextViewTime;
 
     protected int getLayoutId() {
@@ -93,7 +109,8 @@ public String minName;
                 .addOnConnectionFailedListener(this)
                 .build();
         Log.d(TAG, "onCreate:client créé");
-
+        SendNotif();
+//setTimer();
     }
 
 
@@ -106,6 +123,29 @@ public String minName;
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
+    private void setTimer() {
+        timer = new Timer();
+        task = new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (counter == 0) {
+                            //Reload Map...
+                            timer.cancel();
+                            Intent intent = new Intent(MapsActivity.this, MapsActivity.class);
+                            startActivity(intent);
+                        } else {
+                            //  TimeLabel.setText(Integer.toString(counter));
+                            counter = counter - 1;
+                        }
+                    }
+                });
+
+            }
+        };
+    }
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -329,8 +369,18 @@ public String minName;
                 .add(SOUSSESUD)//Sousse Sud
                 .add(MED5)//Med V
                 .add(BEBJDID)//beb Jdid
-
         );
+        Intent inte = getIntent();
+        Bundle bd = inte.getExtras();
+       // int getIndexDep = (Integer) bd.get("indicedep");
+     //   int getIndexarr = (Integer) bd.get("indicearr");
+        String getDep = (String) bd.get("GareDep");
+        String getArr = (String) bd.get("Gareearr");
+    /*    mMap.addPolyline(new PolylineOptions().geodesic(true)
+                .add(new LatLng(lat(getDep),lon(getDep)))
+                .add(new LatLng(lat(getArr),lon(getArr)))
+                .color(R.color.mauve)
+        );*/
         String depar,arriv;
         depar=mainActivity.getGareDepart();
         arriv=mainActivity.getGareArrivee();
@@ -368,6 +418,8 @@ public String minName;
         addIcon(iconFactory, "Borj Arif", BorjArif);*/
      //   showDistance();
         difference();
+        final Handler handler = new Handler();
+
     }
 
 
@@ -399,10 +451,34 @@ public String minName;
                    minName = listM.get(i + 1).getTitle();
                }
            }
+timer();
+    }
+    private void timer(){
+        final Handler handler = new Handler();
+        Timer    timer = new Timer();
+        TimerTask doAsynchronousTask = new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                    @SuppressWarnings("unchecked")
+                    public void run() {
+                        try {
+                           affichage();
+                        }
+                        catch (Exception e) {
+                            // TODO Auto-generated catch block
+                        }
+                    }
+                });
+            }
+        };
+        timer.schedule(doAsynchronousTask, 0, 60000);
+    }
+    private void affichage(){
         java.sql.Time timeValueFromCuror = null;
         java.sql.Time timeValueNow = null;
-        Intent intent = getIntent();
-        Bundle bd = intent.getExtras();
+        Intent in = getIntent();
+        Bundle bd = in.getExtras();
         String getTime = (String) bd.get("tempDeDepart");
         DateFormat formatter = new SimpleDateFormat("HH:mm");
         String timeStamp = formatter.format(Calendar.getInstance().getTime());
@@ -417,16 +493,34 @@ public String minName;
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        long ecartEnMinutes = ( timeValueFromCuror.getTime()-timeValueNow.getTime() ) / 60000;
+        long heures=0;
+        long minutes=0;
+        long ecartEnMinutes = Math.abs( timeValueFromCuror.getTime()-timeValueNow.getTime() )/ 60000;
+
+        if (ecartEnMinutes>60)
+        {
+            heures=ecartEnMinutes/60;
+            minutes=ecartEnMinutes-(heures*60);
+        }else
+        {
+            minutes=ecartEnMinutes;
+        }
         Log.d(TAG, "difference de temp: "+ecartEnMinutes);
-Toast.makeText(MapsActivity.this,"la plus proche distance est"+formatNumber(mindist),Toast.LENGTH_LONG).show();
         mTextView.setText(makeCharSequence("La Plus Proche Station est ",minName));
         if(timeValueFromCuror.after(timeValueNow)) {
-            mTextViewTime.setText(makeCharSequence("Il Vous Reste:" + " ", String.valueOf(ecartEnMinutes + " " + "Minutes")));
+            mTextViewTime.setText(makeCharSequence("Il Vous Reste:" + " ",String.valueOf(heures + " " + "Heures")+" "+ String.valueOf(minutes + " " + "Minutes")));
+        }
+        if(timeValueFromCuror.before(timeValueNow)) {
+            mTextViewTime.setText(makeCharSequence("ce train est parti il y a:" + " ",String.valueOf(heures + " " + "Heures")+" "+ String.valueOf(minutes + " " + "Minutes")));
+        }
+        if( minutes==26 && heures==0)
+        {
+            SendNotif();
+            Log.d(TAG, "notification: ");
+
         }
         Log.d(TAG, "text: "+mTextView);
         Toast.makeText(MapsActivity.this,"la plus proche station est"+" "+minName,Toast.LENGTH_LONG).show();
-
     }
     private CharSequence makeCharSequence(String prefix,String suffix) {
        // String prefix = "La Plus Proche Station est: ";
@@ -594,6 +688,10 @@ Toast.makeText(MapsActivity.this,"la plus proche distance est"+formatNumber(mind
         mGoogleApiClient.connect();
         Toast.makeText(this, "client connecté", Toast.LENGTH_SHORT).show();
     }
+  /*  protected void onPause(){
+        super.onPause();
+        timer.cancel();
+    }*/
     @Override
 
     protected void onStop() {
@@ -601,9 +699,10 @@ Toast.makeText(MapsActivity.this,"la plus proche distance est"+formatNumber(mind
         mGoogleApiClient.disconnect();
     }
 
-    @Override
+   @Override
     protected void onResume() {
         super.onResume();
+
     }
     private void addIcon(IconGenerator iconFactory, CharSequence text, LatLng position) {
         MarkerOptions markerOptions = new MarkerOptions().
@@ -622,7 +721,53 @@ Toast.makeText(MapsActivity.this,"la plus proche distance est"+formatNumber(mind
             }
         }
     }
+    private void SendNotification(){
+        Intent notificationIntent=new Intent(getApplicationContext(),MapsActivity.class);
+        TaskStackBuilder stackBuilder=TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(MapsActivity.class);
+        stackBuilder.addNextIntent(notificationIntent);
+        PendingIntent notificationPendintIntent=stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
+        NotificationCompat.Builder builder=new NotificationCompat.Builder(this);
+        builder.setSmallIcon(R.mipmap.ic_launcher)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher))
+                .setColor(Color.RED)
+            //    .setContentTitle(NotificationDetails)
+                .setContentText("click on the notification to return")
+                .setContentIntent(notificationPendintIntent);
+        builder.setAutoCancel(true);
+        NotificationManager mNotificationManager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+      //  mNotificationManager.notify(mId, stackBuilder.build());
 
+    }
+    private void SendNotif() {
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                      //  .setSmallIcon(R.drawable.notification_icon)
+                        .setContentTitle("My notification")
+                        .setContentText("Hello World!");
+// Creates an explicit intent for an Activity in your app
+        Intent resultIntent = new Intent(this, MapsActivity.class);
 
+// The stack builder object will contain an artificial back stack for the
+// started Activity.
+// This ensures that navigating backward from the Activity leads out of
+// your application to the Home screen.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+// Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(MapsActivity.class);
+// Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+// mId allows you to update the notification later on.
+      //  mNotificationManager.notify(mId, mBuilder.build());
+
+    }
 }
 

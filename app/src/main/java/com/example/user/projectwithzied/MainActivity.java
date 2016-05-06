@@ -45,6 +45,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity   {
     private String[] arraySpinner;
@@ -57,7 +59,6 @@ public class MainActivity extends AppCompatActivity   {
     public static Integer IndexGareArrivee;
     public static Integer IndexGareDepart;
     public static  String headsign;
-
     public static String Tag="jabeur";
 
     @Override
@@ -129,7 +130,6 @@ public class MainActivity extends AppCompatActivity   {
 
 
 
-
     partir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -145,6 +145,10 @@ public class MainActivity extends AppCompatActivity   {
                     DataBaseHelper myDbHelper = new DataBaseHelper(MainActivity.this);
                     Horaires horaires=new Horaires();
                     Intent horaire=new Intent(MainActivity.this,Horaires.class);
+                    horaire.putExtra("indiceDep",IndexGareDepart);
+                    horaire.putExtra("indicearr",IndexGareArrivee);
+                    horaire.putExtra("GareDep",GareDepart);
+                    horaire.putExtra("Gareearr",GareArrivee);
                     startActivity(horaire);
                 }
             }
@@ -176,6 +180,7 @@ public class MainActivity extends AppCompatActivity   {
                         .setAction("Action", null).show();
             }
         });
+      //  setTimer();
 
     }
 
@@ -228,6 +233,19 @@ public class MainActivity extends AppCompatActivity   {
         }
     }
 
+ /*   @Override
+    protected void onResume() {
+        super.onResume();
+        timer.schedule(task, 0, 1000);
+    }*/
+
+  /*  protected void onPause() {
+        super.onPause();
+
+        //This will be called if the app is sent to background or the phone is locked
+        //Also this prevent you from duplicating the instance of your timer
+        timer.cancel();
+    }*/
 }
 
 
