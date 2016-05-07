@@ -233,19 +233,8 @@ public class MainActivity extends AppCompatActivity   {
         }
     }
 
- /*   @Override
-    protected void onResume() {
-        super.onResume();
-        timer.schedule(task, 0, 1000);
-    }*/
 
-  /*  protected void onPause() {
-        super.onPause();
 
-        //This will be called if the app is sent to background or the phone is locked
-        //Also this prevent you from duplicating the instance of your timer
-        timer.cancel();
-    }*/
 }
 
 

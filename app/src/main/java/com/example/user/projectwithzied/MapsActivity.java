@@ -1,6 +1,8 @@
 package com.example.user.projectwithzied;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
@@ -12,6 +14,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -22,6 +26,9 @@ import android.support.v4.app.NotificationCompat;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
 import android.util.Log;
+import android.view.View;
+import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -71,6 +78,7 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
     private CameraPosition cp;
     private TextView mTextView;
     public Double lon,lat;
+    private long heures,minutes;
     private Marker markerGare,markerEzzahra,markerBorjArif,marker;
     private Marker markerSidiMessaoud,markerBaghdadi,markerMahdiaZT,markerTeboulba,markerTeboulbaZI,markerBekalta,markerMonkine,markerMoknineGribaa,markerKsarHelal,markerKsarHelalZI,markerSayyada,markerLamta,
             markerBouhdjar,markerKsiba,markerKhnis,markerFrina,markerMonastirZI,markerFac2,markerMonastir,markerFac,markerAeroport,markerHotels,markerSahlineSabkha,markerSahlineVille,markerSousseZI,markerDepot,markerSousseSud,markerMed5,markerBebJdid;
@@ -81,6 +89,7 @@ public String minName;
     private int counter;
     String TimeLabel;
     private TextView mTextViewTime;
+    private CheckBox mCheckbox;
 
     protected int getLayoutId() {
         return R.layout.maps_layout;
@@ -95,6 +104,7 @@ public String minName;
         mapFragment.getMapAsync(this);
         mTextView = (TextView) findViewById(R.id.station);
         mTextViewTime = (TextView) findViewById(R.id.temp);
+        mCheckbox=(CheckBox) findViewById(R.id.checkbox);
         if (savedInstanceState == null) {
             // First incarnation of this activity.
             mapFragment.setRetainInstance(true);
@@ -109,8 +119,7 @@ public String minName;
                 .addOnConnectionFailedListener(this)
                 .build();
         Log.d(TAG, "onCreate:client créé");
-        SendNotif();
-//setTimer();
+
     }
 
 
@@ -123,29 +132,6 @@ public String minName;
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
-    private void setTimer() {
-        timer = new Timer();
-        task = new TimerTask() {
-            @Override
-            public void run() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (counter == 0) {
-                            //Reload Map...
-                            timer.cancel();
-                            Intent intent = new Intent(MapsActivity.this, MapsActivity.class);
-                            startActivity(intent);
-                        } else {
-                            //  TimeLabel.setText(Integer.toString(counter));
-                            counter = counter - 1;
-                        }
-                    }
-                });
-
-            }
-        };
-    }
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -189,137 +175,138 @@ public String minName;
         mMap.moveCamera(CameraUpdateFactory.newLatLng(Mahdia));
 
 
-      markerGare=  mMap.addMarker(new MarkerOptions()
+        markerGare = mMap.addMarker(new MarkerOptions()
                 .title("Mahdia")
                 .snippet("The most wonderful.")
                 .position(Mahdia));
         markerGare.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_metro_512));
+
 //markerGare.setVisible(false);
 
-        markerEzzahra =  mMap.addMarker(new MarkerOptions()
+        markerEzzahra = mMap.addMarker(new MarkerOptions()
                 .title("EZZAHRA")
                 .snippet("The most wonderful.")
                 .position(new LatLng(35.5000434191629, 11.0483183619427)));
-      markerBorjArif=  mMap.addMarker(new MarkerOptions()
+        markerBorjArif = mMap.addMarker(new MarkerOptions()
                 .title("borj arif")
                 .snippet("The most wonderful.")
                 .position(new LatLng(35.5061928462048, 11.0303670358646)));
-       markerSidiMessaoud= mMap.addMarker(new MarkerOptions()
+        markerSidiMessaoud = mMap.addMarker(new MarkerOptions()
                 .title("sidi messaoud")
                 .snippet("The most wonderful.")
                 .position(new LatLng(35.5210715684533, 11.02721426692)));
-        markerMahdiaZT=mMap.addMarker(new MarkerOptions()
+        markerMahdiaZT = mMap.addMarker(new MarkerOptions()
                 .title("Mahdia Zone Touristique")
                 .snippet("The most wonderful.")
                 .position(MZT));
-      markerBaghdadi=  mMap.addMarker(new MarkerOptions()
+        markerBaghdadi = mMap.addMarker(new MarkerOptions()
                 .title("BAGHDADI")
                 .snippet("The most wonderful.")
                 .position(BAGH));
-        markerBekalta=  mMap.addMarker(new MarkerOptions()
+        markerBekalta = mMap.addMarker(new MarkerOptions()
                 .title("Bekalta")
                 .snippet("The most wonderful.")
                 .position(BKLT));
-        markerTeboulba= mMap.addMarker(new MarkerOptions()
+        markerTeboulba = mMap.addMarker(new MarkerOptions()
                 .title("Teboulba")
                 .snippet("The most wonderful.")
                 .position(TBL));
-        markerTeboulbaZI=  mMap.addMarker(new MarkerOptions()
+        markerTeboulbaZI = mMap.addMarker(new MarkerOptions()
                 .title("Teboulba Zone Indistruelle")
                 .snippet("The most wonderful.")
                 .position(TBLZI));
-        markerMonkine= mMap.addMarker(new MarkerOptions()
+        markerMonkine = mMap.addMarker(new MarkerOptions()
                 .title("Moknine")
                 .snippet("The most wonderful.")
                 .position(MKN));
-        markerMoknineGribaa=mMap.addMarker(new MarkerOptions()
+        markerMoknineGribaa = mMap.addMarker(new MarkerOptions()
                 .title("Moknine Gribaa")
                 .snippet("The most wonderful.")
                 .position(MKNG));
-        markerKsarHelal= mMap.addMarker(new MarkerOptions()
+        markerKsarHelal = mMap.addMarker(new MarkerOptions()
                 .title("Ksar Helal")
                 .snippet("The most wonderful.")
                 .position(KH));
-        markerKsarHelalZI=mMap.addMarker(new MarkerOptions()
+        markerKsarHelalZI = mMap.addMarker(new MarkerOptions()
                 .title("Ksar Helal Zone Indistruelle")
                 .snippet("The most wonderful.")
                 .position(KHZI));
-        markerSayyada= mMap.addMarker(new MarkerOptions()
+        markerSayyada = mMap.addMarker(new MarkerOptions()
                 .title("Sayyada")
                 .snippet("The most wonderful.")
                 .position(SAYADA));
-        markerLamta= mMap.addMarker(new MarkerOptions()
+        markerLamta = mMap.addMarker(new MarkerOptions()
                 .title("Lamta")
                 .snippet("The most wonderful.")
                 .position(LAMTA));
-        markerBouhdjar= mMap.addMarker(new MarkerOptions()
+        markerBouhdjar = mMap.addMarker(new MarkerOptions()
                 .title("Bouhdjar")
                 .snippet("The most wonderful.")
                 .position(BOUHDJAR));
-        markerKsiba= mMap.addMarker(new MarkerOptions()
+        markerKsiba = mMap.addMarker(new MarkerOptions()
                 .title("Ksiba")
                 .snippet("The most wonderful.")
                 .position(KSIBA));
-        markerKhnis= mMap.addMarker(new MarkerOptions()
+        markerKhnis = mMap.addMarker(new MarkerOptions()
                 .title("Khnis")
                 .snippet("The most wonderful.")
                 .position(KHNIS));
-        markerFrina=  mMap.addMarker(new MarkerOptions()
+        markerFrina = mMap.addMarker(new MarkerOptions()
                 .title("Frina")
                 .snippet("The most wonderful.")
                 .position(FRINA));
-        markerMonastirZI= mMap.addMarker(new MarkerOptions()
+        markerMonastirZI = mMap.addMarker(new MarkerOptions()
                 .title("Monastir Zone Indistruelle")
                 .snippet("The most wonderful.")
                 .position(MONASTIRZI));
 
-        markerFac2=  mMap.addMarker(new MarkerOptions()
+        markerFac2 = mMap.addMarker(new MarkerOptions()
                 .title("Faculté 2")
                 .snippet("The most wonderful.")
                 .position(FAC2));
-        markerMonastir=  mMap.addMarker(new MarkerOptions()
+        markerMonastir = mMap.addMarker(new MarkerOptions()
                 .title("Monastir")
                 .snippet("The most wonderful.")
                 .position(MONASTIR));
         markerMonastir.setIcon(BitmapDescriptorFactory.fromResource(ic_metro_512));
 
-        markerFac= mMap.addMarker(new MarkerOptions()
+        markerFac = mMap.addMarker(new MarkerOptions()
                 .title("Faculté")
                 .snippet("The most wonderful.")
                 .position(FAC));
-        markerAeroport=  mMap.addMarker(new MarkerOptions()
+        markerAeroport = mMap.addMarker(new MarkerOptions()
                 .title("Aeroport")
                 .snippet("The most wonderful.")
                 .position(AEROPORT));
-        markerHotels= mMap.addMarker(new MarkerOptions()
+        markerHotels = mMap.addMarker(new MarkerOptions()
                 .title("Les Hotels")
                 .snippet("The most wonderful.")
                 .position(HOTELS));
-        markerSahlineSabkha=  mMap.addMarker(new MarkerOptions()
+        markerSahlineSabkha = mMap.addMarker(new MarkerOptions()
                 .title("Sahline Ville")
                 .snippet("The most wonderful.")
                 .position(SAHLINESABKHA));
-        markerSahlineVille= mMap.addMarker(new MarkerOptions()
+        markerSahlineVille = mMap.addMarker(new MarkerOptions()
                 .title("Sahline Ville")
                 .snippet("The most wonderful.")
                 .position(SAHLINEVILLE));
-        markerSousseZI=  mMap.addMarker(new MarkerOptions()
+        markerSousseZI = mMap.addMarker(new MarkerOptions()
                 .title("Sousse Zone Industrielle")
                 .snippet("The most wonderful.")
                 .position(SOUSSEZI));
-        markerDepot=    mMap.addMarker(new MarkerOptions()
+        markerDepot = mMap.addMarker(new MarkerOptions()
                 .title("Depot")
                 .snippet("The most wonderful.")
                 .position(DEPOT));
-        markerSousseSud= mMap.addMarker(new MarkerOptions()
+        markerSousseSud = mMap.addMarker(new MarkerOptions()
                 .title("Sousse Sud")
                 .snippet("The most wonderful.")
                 .position(SOUSSESUD));
-        markerMed5= mMap.addMarker(new MarkerOptions()
+        markerMed5 = mMap.addMarker(new MarkerOptions()
                 .title("Med V")
                 .snippet("The most wonderful.")
                 .position(MED5));
-        markerBebJdid=  mMap.addMarker(new MarkerOptions()
+        markerBebJdid = mMap.addMarker(new MarkerOptions()
                 .title("Beb Jdid")
                 .snippet("The most wonderful.")
                 .position(BEBJDID));
@@ -327,7 +314,7 @@ public String minName;
 
         MainActivity mainActivity = new MainActivity();
         marker = mMap.addMarker(new MarkerOptions().title("Vous êtes ici").position(new LatLng(0, 0)));
-       marker.setIcon(BitmapDescriptorFactory.fromResource(ic_maps_directions_walk));
+        marker.setIcon(BitmapDescriptorFactory.fromResource(ic_maps_directions_walk));
         // Polylines are useful for marking paths and routes on the map.
         mMap.addPolyline(new PolylineOptions().geodesic(true)
                 .add(new LatLng(35.5008333078298, 11.0644082609385))  // La gare
@@ -372,29 +359,29 @@ public String minName;
         );
         Intent inte = getIntent();
         Bundle bd = inte.getExtras();
-       // int getIndexDep = (Integer) bd.get("indicedep");
-     //   int getIndexarr = (Integer) bd.get("indicearr");
-        String getDep = (String) bd.get("GareDep");
-        String getArr = (String) bd.get("Gareearr");
+        // int getIndexDep = (Integer) bd.get("indicedep");
+        //   int getIndexarr = (Integer) bd.get("indicearr");
+//        String getDep = (String) bd.get("GareDep");
+        //       String getArr = (String) bd.get("Gareearr");
     /*    mMap.addPolyline(new PolylineOptions().geodesic(true)
                 .add(new LatLng(lat(getDep),lon(getDep)))
                 .add(new LatLng(lat(getArr),lon(getArr)))
                 .color(R.color.mauve)
         );*/
-        String depar,arriv;
-        depar=mainActivity.getGareDepart();
-        arriv=mainActivity.getGareArrivee();
+        String depar, arriv;
+        depar = mainActivity.getGareDepart();
+        arriv = mainActivity.getGareArrivee();
         CameraPosition cp = CameraPosition.builder()
-                .target(new LatLng(lat(depar),lon(depar)))
-                .zoom(50000000)
+                .target(new LatLng(lat(depar), lon(depar)))
+                .zoom(50000)
                 .bearing(90)
                 .build();
         IconGenerator iconFactory = new IconGenerator(this);
         iconFactory.setStyle(IconGenerator.STYLE_RED);
-        addIcon(iconFactory,depar,new LatLng(lat(depar),lon(depar)));
+        addIcon(iconFactory, depar, new LatLng(lat(depar), lon(depar)));
 
         iconFactory.setStyle(IconGenerator.STYLE_GREEN);
-        addIcon(iconFactory,arriv,new LatLng(lat(arriv),lon(arriv)));
+        addIcon(iconFactory, arriv, new LatLng(lat(arriv), lon(arriv)));
 
        /* iconFactory.setStyle(IconGenerator.STYLE_BLUE);
         addIcon(iconFactory, "Baghdadi", BAGH);*/
@@ -416,9 +403,9 @@ public String minName;
         //iconFactory.setContentRotation(0);
         iconFactory.setStyle(IconGenerator.STYLE_ORANGE);
         addIcon(iconFactory, "Borj Arif", BorjArif);*/
-     //   showDistance();
+        //   showDistance();
         difference();
-        final Handler handler = new Handler();
+        //     final Handler handler = new Handler();
 
     }
 
@@ -474,7 +461,7 @@ timer();
         };
         timer.schedule(doAsynchronousTask, 0, 60000);
     }
-    private void affichage(){
+    public void affichage(){
         java.sql.Time timeValueFromCuror = null;
         java.sql.Time timeValueNow = null;
         Intent in = getIntent();
@@ -493,8 +480,8 @@ timer();
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        long heures=0;
-        long minutes=0;
+         heures=0;
+         minutes=0;
         long ecartEnMinutes = Math.abs( timeValueFromCuror.getTime()-timeValueNow.getTime() )/ 60000;
 
         if (ecartEnMinutes>60)
@@ -512,15 +499,21 @@ timer();
         }
         if(timeValueFromCuror.before(timeValueNow)) {
             mTextViewTime.setText(makeCharSequence("ce train est parti il y a:" + " ",String.valueOf(heures + " " + "Heures")+" "+ String.valueOf(minutes + " " + "Minutes")));
+            mCheckbox.setEnabled(false);
         }
-        if( minutes==26 && heures==0)
-        {
-            SendNotif();
+  if(mCheckbox.isChecked()==true){
+
+        if(heures==0 && minutes==0) {
+
+            generateNotification(MapsActivity.this, "Votre métro est en place");
             Log.d(TAG, "notification: ");
 
         }
+    }
+
+    //  }
         Log.d(TAG, "text: "+mTextView);
-        Toast.makeText(MapsActivity.this,"la plus proche station est"+" "+minName,Toast.LENGTH_LONG).show();
+    //    Toast.makeText(MapsActivity.this,"la plus proche station est"+" "+minName,Toast.LENGTH_LONG).show();
     }
     private CharSequence makeCharSequence(String prefix,String suffix) {
        // String prefix = "La Plus Proche Station est: ";
@@ -676,7 +669,7 @@ timer();
         final LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         marker.setPosition(latLng);
         Log.d(TAG, "onLocationChanged: ");
-        Toast.makeText(this, "longitude" + lon + "lattitude" + lat, Toast.LENGTH_LONG).show();
+     //   Toast.makeText(this, "longitude" + lon + "lattitude" + lat, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -686,12 +679,9 @@ timer();
     protected void onStart() {
         super.onStart();
         mGoogleApiClient.connect();
-        Toast.makeText(this, "client connecté", Toast.LENGTH_SHORT).show();
+     //   Toast.makeText(this, "client connecté", Toast.LENGTH_SHORT).show();
     }
-  /*  protected void onPause(){
-        super.onPause();
-        timer.cancel();
-    }*/
+
     @Override
 
     protected void onStop() {
@@ -721,53 +711,44 @@ timer();
             }
         }
     }
-    private void SendNotification(){
-        Intent notificationIntent=new Intent(getApplicationContext(),MapsActivity.class);
-        TaskStackBuilder stackBuilder=TaskStackBuilder.create(this);
-        stackBuilder.addParentStack(MapsActivity.class);
-        stackBuilder.addNextIntent(notificationIntent);
-        PendingIntent notificationPendintIntent=stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
-        NotificationCompat.Builder builder=new NotificationCompat.Builder(this);
-        builder.setSmallIcon(R.mipmap.ic_launcher)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher))
-                .setColor(Color.RED)
-            //    .setContentTitle(NotificationDetails)
-                .setContentText("click on the notification to return")
-                .setContentIntent(notificationPendintIntent);
-        builder.setAutoCancel(true);
-        NotificationManager mNotificationManager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-      //  mNotificationManager.notify(mId, stackBuilder.build());
+
+    public long getMinutes() {
+        return minutes;
+    }
+
+    public long getHeures() {
+        return heures;
+    }
+
+    public void generateNotification(Context context, String message) {
+
+        int icon = R.mipmap.ic_launcher;
+        long when = System.currentTimeMillis();
+
+        Intent intent = new Intent(context, Context.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        NotificationCompat.Builder b = new NotificationCompat.Builder(context);
+        b.setAutoCancel(true)
+                .setDefaults(Notification.DEFAULT_ALL)
+       .setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 })
+
+
+                .setSmallIcon(icon)
+                .setTicker("SNCFT Mobile")
+                .setContentTitle("SNCFT Mobile")
+                .setContentText(message)
+                .setDefaults(Notification.DEFAULT_LIGHTS| Notification.DEFAULT_SOUND)
+                .setContentIntent(contentIntent)
+                .setContentInfo("Info");
+
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(1, b.build());
 
     }
-    private void SendNotif() {
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                      //  .setSmallIcon(R.drawable.notification_icon)
-                        .setContentTitle("My notification")
-                        .setContentText("Hello World!");
-// Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(this, MapsActivity.class);
 
-// The stack builder object will contain an artificial back stack for the
-// started Activity.
-// This ensures that navigating backward from the Activity leads out of
-// your application to the Home screen.
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-// Adds the back stack for the Intent (but not the Intent itself)
-        stackBuilder.addParentStack(MapsActivity.class);
-// Adds the Intent that starts the Activity to the top of the stack
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(
-                        0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-        mBuilder.setContentIntent(resultPendingIntent);
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-// mId allows you to update the notification later on.
-      //  mNotificationManager.notify(mId, mBuilder.build());
 
-    }
+
 }
 
