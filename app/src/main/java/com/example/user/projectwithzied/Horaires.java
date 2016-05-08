@@ -72,7 +72,7 @@ public class Horaires extends HorairesStat {
         String depart = mainActivity.getGareDepart();
         String head = mainActivity.getHeadsign();
 
-        final Cursor cur = db.rawQuery("select  _id,departure_time,arrival_time from stop_times,stops  where stop_times.stop_id=stops._id  and trip_id<43 and stops.stop_name=? and stop_times.stop_headsign=?", new String[]{depart, head});
+        final Cursor cur = db.rawQuery("select  _id,departure_time,arrival_time from stop_times,stops  where stop_times.stop_id=stops._id  and trip_id<43 and stops.stop_name=? and stop_times.stop_headsign=? order by departure_time", new String[]{depart, head});
 
         Log.d(Tag, "horaires:");
         if (cur.moveToFirst()) {

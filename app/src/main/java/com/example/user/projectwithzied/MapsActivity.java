@@ -8,6 +8,7 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -18,8 +19,11 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NotificationCompat;
@@ -28,6 +32,7 @@ import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -90,6 +95,7 @@ public String minName;
     String TimeLabel;
     private TextView mTextViewTime;
     private CheckBox mCheckbox;
+    private String PREFS_NAME;
 
     protected int getLayoutId() {
         return R.layout.maps_layout;
@@ -98,13 +104,14 @@ public String minName;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutId());
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         mTextView = (TextView) findViewById(R.id.station);
         mTextViewTime = (TextView) findViewById(R.id.temp);
-        mCheckbox=(CheckBox) findViewById(R.id.checkbox);
+        mCheckbox = (CheckBox) findViewById(R.id.checkbox);
         if (savedInstanceState == null) {
             // First incarnation of this activity.
             mapFragment.setRetainInstance(true);
@@ -120,8 +127,23 @@ public String minName;
                 .build();
         Log.d(TAG, "onCreate:client créé");
 
-    }
+savePreferences();
+}
+    public void savePreferences() {
+        final SharedPreferences settings = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        mCheckbox.setChecked(settings.getBoolean("auto", false));
+        mCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putBoolean("auto", mCheckbox.isChecked());
+                editor.commit();
+                ;
+            }
+        });
+
+    }
 
     /**
      * Manipulates the map once available.
@@ -501,6 +523,9 @@ timer();
             mTextViewTime.setText(makeCharSequence("ce train est parti il y a:" + " ",String.valueOf(heures + " " + "Heures")+" "+ String.valueOf(minutes + " " + "Minutes")));
             mCheckbox.setEnabled(false);
         }
+
+
+
   if(mCheckbox.isChecked()==true){
 
         if(heures==0 && minutes==0) {
@@ -687,6 +712,7 @@ timer();
     protected void onStop() {
         super.onStop();
         mGoogleApiClient.disconnect();
+        savePreferences();
     }
 
    @Override
@@ -748,7 +774,11 @@ timer();
 
     }
 
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        savePreferences();
+    }
 
 }
 
