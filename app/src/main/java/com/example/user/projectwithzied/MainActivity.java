@@ -26,6 +26,7 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -76,6 +77,7 @@ public class MainActivity extends AppCompatActivity   {
         TextView arriv=(TextView) findViewById(R.id.arrivee) ;
         Button partir = (Button) findViewById(R.id.maintenant);
         Button partirpl = (Button) findViewById(R.id.partirpl);
+
         Typeface roboto = Typeface.createFromAsset(getAssets(),
                 "font/Roboto-Medium.ttf"); //use this.getAssets if you are calling from an Activity
         partirpl.setTypeface(roboto);
@@ -161,10 +163,12 @@ public class MainActivity extends AppCompatActivity   {
 
                     Toast.makeText(MainActivity.this, "la station du départ doit être differente de l'arrivée ", Toast.LENGTH_LONG).show();
                 } else {
+
                     GareDepart = dep.getSelectedItem().toString();
                     GareArrivee = arr.getSelectedItem().toString();
                     IndexGareDepart = dep.getSelectedItemPosition();
                     IndexGareArrivee = arr.getSelectedItemPosition();
+
                     DataBaseHelper myDbHelper = new DataBaseHelper(MainActivity.this);
                     Horaires horaires=new Horaires();
                     Intent horairest=new Intent(MainActivity.this,HorairesStat.class);

@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.BitmapFactory;
@@ -34,8 +35,11 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -52,10 +56,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import static android.graphics.Typeface.BOLD;
 import static android.graphics.Typeface.ITALIC;
 import static android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -71,6 +81,7 @@ import static android.graphics.Typeface.BOLD;
 import static android.graphics.Typeface.ITALIC;
 import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 import static com.example.user.projectwithzied.R.drawable.abc_scrubber_primary_mtrl_alpha;
+import static com.example.user.projectwithzied.R.drawable.ic_maps_directions_transit;
 import static com.example.user.projectwithzied.R.drawable.ic_maps_directions_walk;
 import static com.example.user.projectwithzied.R.drawable.ic_metro_512;
 
@@ -80,21 +91,20 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
     private GoogleMap mMap;
     private String TAG = "mapp";
     public String station;
+     public Double attr1,attr2;
     private CameraPosition cp;
     private TextView mTextView;
     public Double lon,lat;
     private long heures,minutes;
-    private Marker markerGare,markerEzzahra,markerBorjArif,marker;
+
+    private Marker markerTrain,markerGare,markerEzzahra,markerBorjArif,marker;
     private Marker markerSidiMessaoud,markerBaghdadi,markerMahdiaZT,markerTeboulba,markerTeboulbaZI,markerBekalta,markerMonkine,markerMoknineGribaa,markerKsarHelal,markerKsarHelalZI,markerSayyada,markerLamta,
             markerBouhdjar,markerKsiba,markerKhnis,markerFrina,markerMonastirZI,markerFac2,markerMonastir,markerFac,markerAeroport,markerHotels,markerSahlineSabkha,markerSahlineVille,markerSousseZI,markerDepot,markerSousseSud,markerMed5,markerBebJdid;
 public String minName;
-    Timer timer;
-    TimerTask task;
 
-    private int counter;
-    String TimeLabel;
     private TextView mTextViewTime;
-    private CheckBox mCheckbox;
+
+    private Switch mToggle;
     private String PREFS_NAME;
 
     protected int getLayoutId() {
@@ -111,7 +121,8 @@ public String minName;
         mapFragment.getMapAsync(this);
         mTextView = (TextView) findViewById(R.id.station);
         mTextViewTime = (TextView) findViewById(R.id.temp);
-        mCheckbox = (CheckBox) findViewById(R.id.checkbox);
+        mToggle=(Switch) findViewById(R.id.tgl);
+
         if (savedInstanceState == null) {
             // First incarnation of this activity.
             mapFragment.setRetainInstance(true);
@@ -131,15 +142,15 @@ savePreferences();
 }
     public void savePreferences() {
         final SharedPreferences settings = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        mCheckbox.setChecked(settings.getBoolean("auto", false));
-        mCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        mToggle.setChecked(settings.getBoolean("auto", false));
+        mToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 SharedPreferences.Editor editor = settings.edit();
-                editor.putBoolean("auto", mCheckbox.isChecked());
+                editor.putBoolean("auto", mToggle.isChecked());
                 editor.commit();
-                ;
+
             }
         });
 
@@ -158,7 +169,13 @@ savePreferences();
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        try {
+            parseJSON();
 
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         LatLng gare = new LatLng(35.5008333078298, 11.0644082609385);
         LatLng Mahdia = new LatLng(35.5008333078298, 11.0644082609385);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((Mahdia), 10));
@@ -200,7 +217,7 @@ savePreferences();
         markerGare = mMap.addMarker(new MarkerOptions()
                 .title("Mahdia")
                 .snippet("The most wonderful.")
-                .position(Mahdia));
+                .position(gare));
         markerGare.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_metro_512));
 
 //markerGare.setVisible(false);
@@ -333,7 +350,10 @@ savePreferences();
                 .snippet("The most wonderful.")
                 .position(BEBJDID));
         markerBebJdid.setIcon(BitmapDescriptorFactory.fromResource(ic_metro_512));
-
+        markerTrain=mMap.addMarker(new MarkerOptions()
+        .title("Votre Train est ici")
+        .position(new LatLng((attr1),attr2)));
+        markerTrain.setIcon(BitmapDescriptorFactory.fromResource(ic_maps_directions_transit));
         MainActivity mainActivity = new MainActivity();
         marker = mMap.addMarker(new MarkerOptions().title("Vous êtes ici").position(new LatLng(0, 0)));
         marker.setIcon(BitmapDescriptorFactory.fromResource(ic_maps_directions_walk));
@@ -395,7 +415,7 @@ savePreferences();
         arriv = mainActivity.getGareArrivee();
         CameraPosition cp = CameraPosition.builder()
                 .target(new LatLng(lat(depar), lon(depar)))
-                .zoom(50000)
+                .zoom(500000000)
                 .bearing(90)
                 .build();
         IconGenerator iconFactory = new IconGenerator(this);
@@ -521,22 +541,31 @@ timer();
         }
         if(timeValueFromCuror.before(timeValueNow)) {
             mTextViewTime.setText(makeCharSequence("ce train est parti il y a:" + " ",String.valueOf(heures + " " + "Heures")+" "+ String.valueOf(minutes + " " + "Minutes")));
-            mCheckbox.setEnabled(false);
+
+            mToggle.setEnabled(false);
+        }
+  /*      mToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(heures==0 && minutes==0) {
+                    mToggle.setChecked(true);
+                    generateNotification(MapsActivity.this, "Votre métro est en place");
+                    Log.d(TAG, "notification: ");
+
+                }
+            }
+        });*/
+
+        if(mToggle.isChecked()==true){
+
+            if(heures==0 && minutes==0) {
+
+                generateNotification(MapsActivity.this, "Votre métro est en place");
+                Log.d(TAG, "notification: ");
+
+            }
         }
 
 
-
-  if(mCheckbox.isChecked()==true){
-
-        if(heures==0 && minutes==0) {
-
-            generateNotification(MapsActivity.this, "Votre métro est en place");
-            Log.d(TAG, "notification: ");
-
-        }
-    }
-
-    //  }
         Log.d(TAG, "text: "+mTextView);
     //    Toast.makeText(MapsActivity.this,"la plus proche station est"+" "+minName,Toast.LENGTH_LONG).show();
     }
@@ -779,6 +808,45 @@ timer();
         super.onPause();
         savePreferences();
     }
+    private String getJSONString(Context context)
+    {
+        String str = "";
+        try
+        {
+            AssetManager assetManager = context.getAssets();
+            InputStream in = assetManager.open("train.json");
+            InputStreamReader isr = new InputStreamReader(in);
+            char [] inputBuffer = new char[100];
+
+            int charRead;
+            while((charRead = isr.read(inputBuffer))>0)
+            {
+                String readString = String.copyValueOf(inputBuffer,0,charRead);
+                str += readString;
+            }
+        }
+        catch(IOException ioe)
+        {
+            ioe.printStackTrace();
+        }
+
+        return str;
+    }
+    public void parseJSON() throws JSONException
+    {
+        JSONObject json = new JSONObject();
+        try {
+            json = new JSONObject(getJSONString(getApplicationContext()));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        json = json.getJSONObject("FirstTrain");
+         attr1 = json.getDouble("lat");
+         attr2 = json.getDouble("lon");
+
+
+
+}
 
 }
 

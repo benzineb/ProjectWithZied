@@ -6,34 +6,58 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:background="@color/white">
+
+    <RelativeLayout
+        android:layout_width="611dp"
+        android:layout_height="67dp"
+        android:layout_gravity="right">
+        <Switch
+            android:width="100dp"
+            android:height="50dp"
+            android:layout_gravity="right"
+            android:id="@+id/tgl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="55dp"
+            android:layout_marginEnd="55dp" />
+        <TextView
+            android:text="temp"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24dp"
+            android:id="@+id/temp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+        <TextView
+            android:text="stat"
+            android:gravity="left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24dp"
+            android:id="@+id/station"
+            android:layout_below="@+id/temp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="124dp"
+            android:layout_marginStart="124dp" />
+
+
+
+    </RelativeLayout>
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-    <TextView
-
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:textSize="24dp"
-    android:id="@+id/station"/>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-        <TextView
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="24dp"
-            android:id="@+id/temp" />
 
 
-          <CheckBox
-              android:id="@+id/checkbox"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content" />
 
 
-        </LinearLayout>
 
 
     </LinearLayout>
@@ -41,5 +65,7 @@
     <fragment android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="com.google.android.gms.maps.SupportMapFragment"/>
+        android:name="com.google.android.gms.maps.SupportMapFragment" />
+
+
 </LinearLayout>

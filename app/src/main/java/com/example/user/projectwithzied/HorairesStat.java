@@ -6,7 +6,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.user.projectwithzied.dummy.CustomCursorAdapter;
@@ -25,10 +27,13 @@ public class HorairesStat extends Activity {
     private Cursor c=null;
     private Cursor cur=null;
     private final String Tag="jab";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_view_horaires);
+
+
 
 
         DataBaseHelper myDbHelper = new DataBaseHelper(HorairesStat.this);

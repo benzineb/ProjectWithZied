@@ -104,6 +104,7 @@
         >
 
             <Button
+                android:radius="3dip"
                 style="@style/MyButton"
                 android:layout_width="fill_parent"
                 android:layout_height="match_parent"
@@ -113,12 +114,13 @@
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:textSize="13pt"
+
+
                 android:background="@color/mauve"
                 android:id="@+id/maintenant"
                 android:layout_marginRight="@dimen/button_margin"
+                />
 
-
-            />
             <Button style="@style/MyButton"
                     android:layout_width="fill_parent"
                     android:layout_height="match_parent"
