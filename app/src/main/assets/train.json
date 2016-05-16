@@ -1,5 +1,5 @@
 {"FirstTrain": { "lat":35.8228507767531 ,"lon":10.6415840823664,"vit":50,
 
-  "sub": { "sub1":[ {"sub1_attr":"sub1_attr_value" },{"sub1_attr":"sub2_attr_value" }]}
+  "temp": { "":[ {"sub1_attr":"sub1_attr_value" },{"sub1_attr":"sub2_attr_value" }]}
 }
   }

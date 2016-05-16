@@ -29,6 +29,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NotificationCompat;
 import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.View;
@@ -178,7 +179,11 @@ savePreferences();
         }
         LatLng gare = new LatLng(35.5008333078298, 11.0644082609385);
         LatLng Mahdia = new LatLng(35.5008333078298, 11.0644082609385);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((Mahdia), 10));
+        String depar, arriv;
+        MainActivity mainActivity = new MainActivity();
+        depar = mainActivity.getGareDepart();
+        arriv = mainActivity.getGareArrivee();
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((new LatLng(lat(depar), lon(depar))), 12));
         LatLng BorjArif = new LatLng(lat("Borj Arif"), lon("Borj Arif"));
         LatLng SM = new LatLng(lat("Sidi Massaoud"), lon("Sidi Massaoud"));
         LatLng MZT = new LatLng(lat("Mahdia Z.T."), lon("Mahdia Z.T."));
@@ -211,14 +216,13 @@ savePreferences();
         LatLng BEBJDID = new LatLng(lat("Sousse Bab Jédid"), lon("Sousse Bab Jédid"));
 
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(Mahdia));
 
 
         markerGare = mMap.addMarker(new MarkerOptions()
                 .title("Mahdia")
                 .snippet("The most wonderful.")
                 .position(gare));
-        markerGare.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_metro_512));
+    //    markerGare.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_metro_512));
 
 //markerGare.setVisible(false);
 
@@ -307,7 +311,7 @@ savePreferences();
                 .title("Monastir")
                 .snippet("The most wonderful.")
                 .position(MONASTIR));
-        markerMonastir.setIcon(BitmapDescriptorFactory.fromResource(ic_metro_512));
+      //  markerMonastir.setIcon(BitmapDescriptorFactory.fromResource(ic_metro_512));
 
         markerFac = mMap.addMarker(new MarkerOptions()
                 .title("Faculté")
@@ -349,12 +353,12 @@ savePreferences();
                 .title("Beb Jdid")
                 .snippet("The most wonderful.")
                 .position(BEBJDID));
-        markerBebJdid.setIcon(BitmapDescriptorFactory.fromResource(ic_metro_512));
+     //   markerBebJdid.setIcon(BitmapDescriptorFactory.fromResource(ic_metro_512));
         markerTrain=mMap.addMarker(new MarkerOptions()
         .title("Votre Train est ici")
         .position(new LatLng((attr1),attr2)));
         markerTrain.setIcon(BitmapDescriptorFactory.fromResource(ic_maps_directions_transit));
-        MainActivity mainActivity = new MainActivity();
+
         marker = mMap.addMarker(new MarkerOptions().title("Vous êtes ici").position(new LatLng(0, 0)));
         marker.setIcon(BitmapDescriptorFactory.fromResource(ic_maps_directions_walk));
         // Polylines are useful for marking paths and routes on the map.
@@ -410,12 +414,10 @@ savePreferences();
                 .add(new LatLng(lat(getArr),lon(getArr)))
                 .color(R.color.mauve)
         );*/
-        String depar, arriv;
-        depar = mainActivity.getGareDepart();
-        arriv = mainActivity.getGareArrivee();
+
         CameraPosition cp = CameraPosition.builder()
                 .target(new LatLng(lat(depar), lon(depar)))
-                .zoom(500000000)
+
                 .bearing(90)
                 .build();
         IconGenerator iconFactory = new IconGenerator(this);
@@ -538,22 +540,22 @@ timer();
         mTextView.setText(makeCharSequence("La Plus Proche Station est ",minName));
         if(timeValueFromCuror.after(timeValueNow)) {
             mTextViewTime.setText(makeCharSequence("Il Vous Reste:" + " ",String.valueOf(heures + " " + "Heures")+" "+ String.valueOf(minutes + " " + "Minutes")));
+
         }
         if(timeValueFromCuror.before(timeValueNow)) {
             mTextViewTime.setText(makeCharSequence("ce train est parti il y a:" + " ",String.valueOf(heures + " " + "Heures")+" "+ String.valueOf(minutes + " " + "Minutes")));
 
             mToggle.setEnabled(false);
         }
-  /*      mToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        mToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(heures==0 && minutes==0) {
-                    mToggle.setChecked(true);
-                    generateNotification(MapsActivity.this, "Votre métro est en place");
-                    Log.d(TAG, "notification: ");
-
+                if (mToggle.isChecked()==false) {
+                    Toast.makeText(MapsActivity.this, "Notification Déactivée", Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(MapsActivity.this, "Notification activée", Toast.LENGTH_LONG).show();
                 }
             }
-        });*/
+        });
 
         if(mToggle.isChecked()==true){
 
@@ -575,7 +577,7 @@ timer();
         String sequence = prefix + suffix;
         SpannableStringBuilder ssb = new SpannableStringBuilder(sequence);
         ssb.setSpan(new StyleSpan(ITALIC), 0, prefix.length(), SPAN_EXCLUSIVE_EXCLUSIVE);
-        ssb.setSpan(new StyleSpan(BOLD), prefix.length(), sequence.length(), SPAN_EXCLUSIVE_EXCLUSIVE);
+        ssb.setSpan(new ForegroundColorSpan(Color.RED), prefix.length(), sequence.length(), SPAN_EXCLUSIVE_EXCLUSIVE);
 
         return ssb;
     }
