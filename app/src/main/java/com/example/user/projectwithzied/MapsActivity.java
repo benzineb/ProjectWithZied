@@ -97,8 +97,8 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
     private TextView mTextView;
     public Double lon,lat;
     private long heures,minutes;
-
-    private Marker markerTrain,markerGare,markerEzzahra,markerBorjArif,marker;
+public Marker marker;
+    private Marker markerTrain,markerGare,markerEzzahra,markerBorjArif;
     private Marker markerSidiMessaoud,markerBaghdadi,markerMahdiaZT,markerTeboulba,markerTeboulbaZI,markerBekalta,markerMonkine,markerMoknineGribaa,markerKsarHelal,markerKsarHelalZI,markerSayyada,markerLamta,
             markerBouhdjar,markerKsiba,markerKhnis,markerFrina,markerMonastirZI,markerFac2,markerMonastir,markerFac,markerAeroport,markerHotels,markerSahlineSabkha,markerSahlineVille,markerSousseZI,markerDepot,markerSousseSud,markerMed5,markerBebJdid;
 public String minName;
@@ -220,7 +220,6 @@ savePreferences();
 
         markerGare = mMap.addMarker(new MarkerOptions()
                 .title("Mahdia")
-                .snippet("The most wonderful.")
                 .position(gare));
     //    markerGare.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_metro_512));
 
@@ -228,130 +227,100 @@ savePreferences();
 
         markerEzzahra = mMap.addMarker(new MarkerOptions()
                 .title("EZZAHRA")
-                .snippet("The most wonderful.")
                 .position(new LatLng(35.5000434191629, 11.0483183619427)));
         markerBorjArif = mMap.addMarker(new MarkerOptions()
                 .title("borj arif")
-                .snippet("The most wonderful.")
                 .position(new LatLng(35.5061928462048, 11.0303670358646)));
         markerSidiMessaoud = mMap.addMarker(new MarkerOptions()
                 .title("sidi messaoud")
-                .snippet("The most wonderful.")
                 .position(new LatLng(35.5210715684533, 11.02721426692)));
         markerMahdiaZT = mMap.addMarker(new MarkerOptions()
                 .title("Mahdia Zone Touristique")
-                .snippet("The most wonderful.")
                 .position(MZT));
         markerBaghdadi = mMap.addMarker(new MarkerOptions()
                 .title("BAGHDADI")
-                .snippet("The most wonderful.")
                 .position(BAGH));
         markerBekalta = mMap.addMarker(new MarkerOptions()
                 .title("Bekalta")
-                .snippet("The most wonderful.")
                 .position(BKLT));
         markerTeboulba = mMap.addMarker(new MarkerOptions()
                 .title("Teboulba")
-                .snippet("The most wonderful.")
                 .position(TBL));
         markerTeboulbaZI = mMap.addMarker(new MarkerOptions()
                 .title("Teboulba Zone Indistruelle")
-                .snippet("The most wonderful.")
                 .position(TBLZI));
         markerMonkine = mMap.addMarker(new MarkerOptions()
                 .title("Moknine")
-                .snippet("The most wonderful.")
                 .position(MKN));
         markerMoknineGribaa = mMap.addMarker(new MarkerOptions()
                 .title("Moknine Gribaa")
-                .snippet("The most wonderful.")
                 .position(MKNG));
         markerKsarHelal = mMap.addMarker(new MarkerOptions()
                 .title("Ksar Helal")
-                .snippet("The most wonderful.")
                 .position(KH));
         markerKsarHelalZI = mMap.addMarker(new MarkerOptions()
                 .title("Ksar Helal Zone Indistruelle")
-                .snippet("The most wonderful.")
                 .position(KHZI));
         markerSayyada = mMap.addMarker(new MarkerOptions()
                 .title("Sayyada")
-                .snippet("The most wonderful.")
                 .position(SAYADA));
         markerLamta = mMap.addMarker(new MarkerOptions()
                 .title("Lamta")
-                .snippet("The most wonderful.")
                 .position(LAMTA));
         markerBouhdjar = mMap.addMarker(new MarkerOptions()
                 .title("Bouhdjar")
-                .snippet("The most wonderful.")
                 .position(BOUHDJAR));
         markerKsiba = mMap.addMarker(new MarkerOptions()
                 .title("Ksiba")
-                .snippet("The most wonderful.")
                 .position(KSIBA));
         markerKhnis = mMap.addMarker(new MarkerOptions()
                 .title("Khnis")
-                .snippet("The most wonderful.")
                 .position(KHNIS));
         markerFrina = mMap.addMarker(new MarkerOptions()
                 .title("Frina")
-                .snippet("The most wonderful.")
                 .position(FRINA));
         markerMonastirZI = mMap.addMarker(new MarkerOptions()
                 .title("Monastir Zone Indistruelle")
-                .snippet("The most wonderful.")
                 .position(MONASTIRZI));
 
         markerFac2 = mMap.addMarker(new MarkerOptions()
                 .title("Faculté 2")
-                .snippet("The most wonderful.")
                 .position(FAC2));
         markerMonastir = mMap.addMarker(new MarkerOptions()
                 .title("Monastir")
-                .snippet("The most wonderful.")
                 .position(MONASTIR));
       //  markerMonastir.setIcon(BitmapDescriptorFactory.fromResource(ic_metro_512));
 
         markerFac = mMap.addMarker(new MarkerOptions()
                 .title("Faculté")
-                .snippet("The most wonderful.")
+
                 .position(FAC));
         markerAeroport = mMap.addMarker(new MarkerOptions()
                 .title("Aeroport")
-                .snippet("The most wonderful.")
                 .position(AEROPORT));
         markerHotels = mMap.addMarker(new MarkerOptions()
                 .title("Les Hotels")
-                .snippet("The most wonderful.")
                 .position(HOTELS));
         markerSahlineSabkha = mMap.addMarker(new MarkerOptions()
                 .title("Sahline Ville")
-                .snippet("The most wonderful.")
                 .position(SAHLINESABKHA));
         markerSahlineVille = mMap.addMarker(new MarkerOptions()
                 .title("Sahline Ville")
-                .snippet("The most wonderful.")
                 .position(SAHLINEVILLE));
         markerSousseZI = mMap.addMarker(new MarkerOptions()
                 .title("Sousse Zone Industrielle")
-                .snippet("The most wonderful.")
                 .position(SOUSSEZI));
         markerDepot = mMap.addMarker(new MarkerOptions()
                 .title("Depot")
-                .snippet("The most wonderful.")
                 .position(DEPOT));
         markerSousseSud = mMap.addMarker(new MarkerOptions()
                 .title("Sousse Sud")
-                .snippet("The most wonderful.")
                 .position(SOUSSESUD));
         markerMed5 = mMap.addMarker(new MarkerOptions()
                 .title("Med V")
-                .snippet("The most wonderful.")
                 .position(MED5));
         markerBebJdid = mMap.addMarker(new MarkerOptions()
                 .title("Beb Jdid")
-                .snippet("The most wonderful.")
                 .position(BEBJDID));
      //   markerBebJdid.setIcon(BitmapDescriptorFactory.fromResource(ic_metro_512));
         markerTrain=mMap.addMarker(new MarkerOptions()
@@ -403,17 +372,8 @@ savePreferences();
                 .add(MED5)//Med V
                 .add(BEBJDID)//beb Jdid
         );
-        Intent inte = getIntent();
-        Bundle bd = inte.getExtras();
-        // int getIndexDep = (Integer) bd.get("indicedep");
-        //   int getIndexarr = (Integer) bd.get("indicearr");
-//        String getDep = (String) bd.get("GareDep");
-        //       String getArr = (String) bd.get("Gareearr");
-    /*    mMap.addPolyline(new PolylineOptions().geodesic(true)
-                .add(new LatLng(lat(getDep),lon(getDep)))
-                .add(new LatLng(lat(getArr),lon(getArr)))
-                .color(R.color.mauve)
-        );*/
+
+
 
         CameraPosition cp = CameraPosition.builder()
                 .target(new LatLng(lat(depar), lon(depar)))
@@ -427,39 +387,29 @@ savePreferences();
         iconFactory.setStyle(IconGenerator.STYLE_GREEN);
         addIcon(iconFactory, arriv, new LatLng(lat(arriv), lon(arriv)));
 
-       /* iconFactory.setStyle(IconGenerator.STYLE_BLUE);
-        addIcon(iconFactory, "Baghdadi", BAGH);*/
-
-    /*    //  iconFactory.setRotation(90);
-        iconFactory.setStyle(IconGenerator.STYLE_RED);
-        addIcon(iconFactory, "Teboulba", TBL);
-
-        //   iconFactory.setContentRotation(-90);
-        iconFactory.setStyle(IconGenerator.STYLE_PURPLE);
-        addIcon(iconFactory, "Moknine", MKN);
-
-        // iconFactory.setRotation(0);
-        //iconFactory.setContentRotation(90);
-        iconFactory.setStyle(IconGenerator.STYLE_GREEN);
-        addIcon(iconFactory, "Gare H.Bourguiba", MONASTIR);
-
-        //  iconFactory.setRotation(0);
-        //iconFactory.setContentRotation(0);
-        iconFactory.setStyle(IconGenerator.STYLE_ORANGE);
-        addIcon(iconFactory, "Borj Arif", BorjArif);*/
-        //   showDistance();
         difference();
-        //     final Handler handler = new Handler();
+
 
     }
 
 
 
     private double showDistance(Marker m) {
-        double distance = SphericalUtil.computeDistanceBetween(getMarker().getPosition(), m.getPosition());
-      //  Toast.makeText(MapsActivity.this, "la distance est" + formatNumber(distance), Toast.LENGTH_LONG).show();
+      //  double distance = SphericalUtil.computeDistanceBetween(getMarker().getPosition(), m.getPosition());
+         double distance = SphericalUtil.computeDistanceBetween(marker.getPosition(), m.getPosition());
+        Log.d(TAG, "marqueur: "+marker.getPosition());
+        //  Toast.makeText(MapsActivity.this, "la distance est" + formatNumber(distance), Toast.LENGTH_LONG).show();
         Log.d(TAG, "showDistance: "+formatNumber(distance));
         return distance;
+    }
+    @Override
+    public void onLocationChanged(Location location) {
+        lon = location.getLongitude();
+        lat = location.getLatitude();
+        final LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        marker.setPosition(latLng);
+        Log.d(TAG, "onLocationChanged: ");
+        //   Toast.makeText(this, "longitude" + lon + "lattitude" + lat, Toast.LENGTH_LONG).show();
     }
     private void difference() {
         double next;
@@ -467,19 +417,43 @@ savePreferences();
         int i = 0;
         double mindist=0.00;
         ArrayList<Marker> listM = new ArrayList<>();
-     //   listM.add(getMarker());
+
         listM.add(markerGare);
         listM.add(markerBorjArif);
         listM.add(markerEzzahra);
-        listM.addAll(Arrays.asList(markerSidiMessaoud,markerBaghdadi,markerMahdiaZT,markerTeboulba,markerTeboulbaZI,markerBekalta,markerMonkine,markerMoknineGribaa,markerKsarHelal,markerKsarHelalZI,markerSayyada,markerLamta,
-                markerBouhdjar,markerKsiba,markerKhnis,markerFrina,markerMonastirZI,markerFac2,markerMonastir,markerFac,markerAeroport,markerHotels,markerSahlineSabkha,markerSahlineVille,markerSousseZI,markerDepot,markerSousseSud,markerMed5,markerBebJdid));
+        listM.add(markerSidiMessaoud);
+        listM.add(markerBaghdadi);
+        listM.add(markerMahdiaZT);
+        listM.add(markerTeboulba);
+        listM.add(markerTeboulbaZI);
+        listM.add(markerBekalta);
+        listM.add(markerMonkine);
+        listM.add(markerMoknineGribaa);
+        listM.add(markerKsarHelal);
+        listM.add(markerKsarHelalZI);
+        listM.add(markerSayyada);
+        listM.add(markerLamta);
+        listM.add(markerBouhdjar);
+        listM.add(markerKsiba);
+        listM.add(markerKhnis);
+        listM.add(markerFrina);
+        listM.add(markerMonastirZI);
+        listM.add(markerFac2);
+        listM.add(markerMonastir);
+        listM.add(markerFac);
+        listM.add(markerAeroport);listM.add(markerHotels);listM.add(markerSahlineSabkha);listM.add(markerSahlineVille);
+        listM.add(markerSousseZI);listM.add(markerDepot);listM.add(markerSousseSud);listM.add(markerMed5);listM.add(markerBebJdid);
+
+
         mindist = showDistance(listM.get(0));
         minName=listM.get(0).getTitle();
+        Log.d(TAG, "minNameInitial: "+minName);
         for (i=0;i<listM.size()-1;i++) {
                next=showDistance(listM.get(i + 1));
                if ((Double.valueOf(next) < Double.valueOf(mindist))) {
                    mindist = next;
                    minName = listM.get(i + 1).getTitle();
+                   Log.d(TAG, "minNamefinal: "+minName);
                }
            }
 timer();
@@ -539,7 +513,7 @@ timer();
         Log.d(TAG, "difference de temp: "+ecartEnMinutes);
         mTextView.setText(makeCharSequence("La Plus Proche Station est ",minName));
         if(timeValueFromCuror.after(timeValueNow)) {
-            mTextViewTime.setText(makeCharSequence("Il Vous Reste:" + " ",String.valueOf(heures + " " + "Heures")+" "+ String.valueOf(minutes + " " + "Minutes")));
+            mTextViewTime.setText(makeCharSequence("Il Vous Reste" + " ",String.valueOf(heures + " " + "Heures")+" "+ String.valueOf(minutes + " " + "Minutes")));
 
         }
         if(timeValueFromCuror.before(timeValueNow)) {
@@ -718,15 +692,7 @@ timer();
 
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        lon = location.getLongitude();
-        lat = location.getLatitude();
-        final LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        marker.setPosition(latLng);
-        Log.d(TAG, "onLocationChanged: ");
-     //   Toast.makeText(this, "longitude" + lon + "lattitude" + lat, Toast.LENGTH_LONG).show();
-    }
+
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
