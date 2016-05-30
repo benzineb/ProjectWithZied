@@ -2,6 +2,7 @@ package com.example.user.projectwithzied;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -10,6 +11,7 @@ import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -76,6 +78,8 @@ public class MainActivity extends AppCompatActivity   {
         TextView departure=(TextView) findViewById(R.id.depart) ;
         TextView arriv=(TextView) findViewById(R.id.arrivee) ;
         Button partir = (Button) findViewById(R.id.maintenant);
+        final Vibrator vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
         Button partirpl = (Button) findViewById(R.id.partirpl);
 
         Typeface roboto = Typeface.createFromAsset(getAssets(),
@@ -140,12 +144,11 @@ public class MainActivity extends AppCompatActivity   {
 
                     Toast.makeText(MainActivity.this, "la station du départ doit être differente de l'arrivée ", Toast.LENGTH_LONG).show();
                 } else {
+                    vibe.vibrate(100);
                     GareDepart = dep.getSelectedItem().toString();
                     GareArrivee = arr.getSelectedItem().toString();
                     IndexGareDepart = dep.getSelectedItemPosition();
                     IndexGareArrivee = arr.getSelectedItemPosition();
-                    DataBaseHelper myDbHelper = new DataBaseHelper(MainActivity.this);
-                    Horaires horaires=new Horaires();
                     Intent horaire=new Intent(MainActivity.this,Horaires.class);
                     horaire.putExtra("indiceDep",IndexGareDepart);
                     horaire.putExtra("indicearr",IndexGareArrivee);
@@ -164,6 +167,7 @@ public class MainActivity extends AppCompatActivity   {
                     Toast.makeText(MainActivity.this, "la station du départ doit être differente de l'arrivée ", Toast.LENGTH_LONG).show();
                 } else {
 
+                    vibe.vibrate(100);
                     GareDepart = dep.getSelectedItem().toString();
                     GareArrivee = arr.getSelectedItem().toString();
                     IndexGareDepart = dep.getSelectedItemPosition();

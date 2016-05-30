@@ -1,12 +1,14 @@
 package com.example.user.projectwithzied;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.nfc.Tag;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,20 +28,13 @@ import java.sql.SQLException;
 
 public class Horaires extends HorairesStat {
     private CustomCursorAdapter customAdapter;
-    private CustomCursorAdapter customAdapters;
-    private DataBaseHelper databaseHelper;
-    private static final int ENTER_DATA_REQUEST_CODE = 1;
     private ListView listView;
-    private static final String TAG = Horaires.class.getSimpleName();
-    private Cursor c = null;
-    private Cursor cur = null;
     private final String Tag = "jab";
-    private String tempDeDepart;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_view_horaires);
+        final Vibrator vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
 
         DataBaseHelper myDbHelper = new DataBaseHelper(Horaires.this);
@@ -87,11 +82,11 @@ public class Horaires extends HorairesStat {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-               CustomCursorAdapter customCursorAdapter=new CustomCursorAdapter(Horaires.this,  c);
                 if (isOnline() == false) {
                     Toast.makeText(Horaires.this, "Vérifier connexion internet", Toast.LENGTH_LONG).show();
                 } else  {
-                    Log.d(TAG, "clicked on item: " + position);
+                    vibe.vibrate(100);
+                    Log.d(Tag, "clicked on item: " + position);
                     Intent map = new Intent(Horaires.this, MapsActivity.class);
                     String selected = ((TextView) view.findViewById(R.id.dep)).getText().toString();
                     map.putExtra("tempDeDepart", selected);

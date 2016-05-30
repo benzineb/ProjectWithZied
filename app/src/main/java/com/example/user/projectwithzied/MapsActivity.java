@@ -16,10 +16,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
+import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -64,9 +66,14 @@ import org.json.JSONObject;
 import static android.graphics.Typeface.BOLD;
 import static android.graphics.Typeface.ITALIC;
 import static android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE;
+
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -77,6 +84,8 @@ import java.util.Calendar;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static android.graphics.Typeface.BOLD;
 import static android.graphics.Typeface.ITALIC;
@@ -93,7 +102,6 @@ public class MapsActivity extends FragmentActivity  implements OnMapReadyCallbac
     private String TAG = "mapp";
     public String station;
      public Double attr1,attr2;
-    private CameraPosition cp;
     private TextView mTextView;
     public Double lon,lat;
     private long heures,minutes;
@@ -102,9 +110,10 @@ public Marker marker;
     private Marker markerSidiMessaoud,markerBaghdadi,markerMahdiaZT,markerTeboulba,markerTeboulbaZI,markerBekalta,markerMonkine,markerMoknineGribaa,markerKsarHelal,markerKsarHelalZI,markerSayyada,markerLamta,
             markerBouhdjar,markerKsiba,markerKhnis,markerFrina,markerMonastirZI,markerFac2,markerMonastir,markerFac,markerAeroport,markerHotels,markerSahlineSabkha,markerSahlineVille,markerSousseZI,markerDepot,markerSousseSud,markerMed5,markerBebJdid;
 public String minName;
-
+    public String url="http://bustime.mta.info/api/siri/stop-monitoring.json";
+//public String url="http://bustime.mta.info/api/siri/stop-monitoring.json?key=5c71f1f4-2f1e-46c7-b291-654bbe216a9c&OperatorRef=MTA&MonitoringRef=308209&LineRef=MTA%20NYCT_B63";
     private TextView mTextViewTime;
-
+    public Vibrator vibe;
     private Switch mToggle;
     private String PREFS_NAME;
 
@@ -123,6 +132,7 @@ public String minName;
         mTextView = (TextView) findViewById(R.id.station);
         mTextViewTime = (TextView) findViewById(R.id.temp);
         mToggle=(Switch) findViewById(R.id.tgl);
+         vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         if (savedInstanceState == null) {
             // First incarnation of this activity.
@@ -171,11 +181,12 @@ savePreferences();
         mMap = googleMap;
 
         try {
-            parseJSON();
-
-        } catch (JSONException e) {
+        String result= getJSON(60);
+            Log.d(TAG, "onMapReady: "+result);
+        } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+
         }
         LatLng gare = new LatLng(35.5008333078298, 11.0644082609385);
         LatLng Mahdia = new LatLng(35.5008333078298, 11.0644082609385);
@@ -323,10 +334,10 @@ savePreferences();
                 .title("Beb Jdid")
                 .position(BEBJDID));
      //   markerBebJdid.setIcon(BitmapDescriptorFactory.fromResource(ic_metro_512));
-        markerTrain=mMap.addMarker(new MarkerOptions()
-        .title("Votre Train est ici")
-        .position(new LatLng((attr1),attr2)));
-        markerTrain.setIcon(BitmapDescriptorFactory.fromResource(ic_maps_directions_transit));
+      //  markerTrain=mMap.addMarker(new MarkerOptions()
+       // .title("Votre Train est ici");
+//        .position(new LatLng((attr1),attr2)));
+   //     markerTrain.setIcon(BitmapDescriptorFactory.fromResource(ic_maps_directions_transit));
 
         marker = mMap.addMarker(new MarkerOptions().title("Vous êtes ici").position(new LatLng(0, 0)));
         marker.setIcon(BitmapDescriptorFactory.fromResource(ic_maps_directions_walk));
@@ -511,22 +522,24 @@ timer();
             minutes=ecartEnMinutes;
         }
         Log.d(TAG, "difference de temp: "+ecartEnMinutes);
-        mTextView.setText(makeCharSequence("La Plus Proche Station est ",minName));
+        mTextView.setText(makeCharSequence(" Proche Station est ",minName));
         if(timeValueFromCuror.after(timeValueNow)) {
-            mTextViewTime.setText(makeCharSequence("Il Vous Reste" + " ",String.valueOf(heures + " " + "Heures")+" "+ String.valueOf(minutes + " " + "Minutes")));
+            mTextViewTime.setText(makeCharSequence(String.valueOf(heures + " " + "Heures")+" "+ String.valueOf(minutes + " " + "Minutes")," Restantes"));
 
         }
         if(timeValueFromCuror.before(timeValueNow)) {
-            mTextViewTime.setText(makeCharSequence("ce train est parti il y a:" + " ",String.valueOf(heures + " " + "Heures")+" "+ String.valueOf(minutes + " " + "Minutes")));
+            mTextViewTime.setText(makeCharSequence("Train Parti il y a:" + " ",String.valueOf(heures + " " + "Heures")+" "+ String.valueOf(minutes + " " + "Minutes")));
 
             mToggle.setEnabled(false);
         }
         mToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (mToggle.isChecked()==false) {
+                    vibe.vibrate(100);
                     Toast.makeText(MapsActivity.this, "Notification Déactivée", Toast.LENGTH_LONG).show();
                 }else{
                     Toast.makeText(MapsActivity.this, "Notification activée", Toast.LENGTH_LONG).show();
+                    vibe.vibrate(100);
                 }
             }
         });
@@ -645,17 +658,11 @@ timer();
         return lon;
     };
 
-    public String getStation() {
-        return station;
-    }
 
     public GoogleMap getmMap() {
         return mMap;
     }
 
-    public Marker getMarker() {
-        return marker;
-    }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
@@ -746,7 +753,8 @@ timer();
     public void generateNotification(Context context, String message) {
 
         int icon = R.mipmap.ic_launcher;
-        long when = System.currentTimeMillis();
+        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
 
         Intent intent = new Intent(context, Context.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -765,7 +773,8 @@ timer();
                 .setDefaults(Notification.DEFAULT_LIGHTS| Notification.DEFAULT_SOUND)
                 .setContentIntent(contentIntent)
                 .setContentInfo("Info");
-
+        Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+        r.play();
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(1, b.build());
 
@@ -775,6 +784,50 @@ timer();
     protected void onPause() {
         super.onPause();
         savePreferences();
+    }
+    public String getJSON( int timeout) {
+        HttpURLConnection c = null;
+        try {
+            URL u = new URL(url);
+            c = (HttpURLConnection) u.openConnection();
+            c.setRequestMethod("GET");
+            c.setRequestProperty("Content-length", "0");
+            c.setUseCaches(false);
+            c.setAllowUserInteraction(false);
+            c.setConnectTimeout(timeout);
+            c.setReadTimeout(timeout);
+            c.connect();
+            int status = c.getResponseCode();
+
+            switch (status) {
+                case 200:
+                case 201:
+                    BufferedReader br = new BufferedReader(new InputStreamReader(c.getInputStream()));
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        sb.append(line+"\n");
+                        Log.d(TAG, "getJSON: "+sb);
+                    }
+                    br.close();
+
+                    return sb.toString();
+            }
+
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (c != null) {
+                try {
+                    c.disconnect();
+                } catch (Exception ex) {
+                    Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        return null;
     }
     private String getJSONString(Context context)
     {

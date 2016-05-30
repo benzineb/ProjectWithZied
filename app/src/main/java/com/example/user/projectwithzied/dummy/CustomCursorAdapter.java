@@ -60,20 +60,16 @@ public class CustomCursorAdapter extends CustomCursorAdapterStat {
         TextView textViewPersonName = (TextView) view.findViewById(R.id.dep);
      if(timeValueFromCuror.after(timeValueNow)) {
          textViewPersonName.setText(cursor.getString(cursor.getColumnIndex(cursor.getColumnName(1))));
-         textViewPersonName.setTextColor(R.color.mauve);
+         textViewPersonName.setTextColor(0xff9933cc);
          Log.d(Tag, "bindViewcursor: " + cursor.getString(1));
 
      }else
      {
          textViewPersonName.setText(cursor.getString(cursor.getColumnIndex(cursor.getColumnName(1)))+"    "+"Parti");
+         textViewPersonName.setTextColor(0xffcc0000);
 
 
      }
 
-        // String txt=cursor.getString( cursor.getColumnIndex( MyTable.COLUMN_TITLE ) )
-      // textViewPersonName.setText("abc");
-   //   textViewPersonName.setText(cursor.getString(0));
-    //   TextView textViewPersonPIN = (TextView) view.findViewById(R.id.arr);
-    //    textViewPersonPIN.setText(cursor.getString(cursor.getColumnIndex(cursor.getColumnName(2))));
     }
 }
