@@ -120,7 +120,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Gare de départ"
+            android:text="GARE DE DEPART"
             android:drawableLeft="@drawable/greenarrowlarge"
 
             android:id="@+id/depart"
@@ -159,7 +159,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Gare d&apos;arrivée"
+            android:text="GARE D'ARRIVEE"
             android:drawableLeft="@drawable/redarrowlarge"
             android:gravity="left"
             android:textStyle="bold"
