@@ -15,15 +15,12 @@
         android:id="@+id/titre"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_height="wrap_content">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="PROCHAINS TRAINS"
-            android:textSize="35dp"
+            android:textSize="40dp"
             android:gravity="center"
             android:elevation="5dp"
             android:textColor="@color/mauve"
@@ -41,69 +38,77 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="45dp"></LinearLayout>
+    <LinearLayout
 
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/linearLayout"
+        android:weightSum="1">
 
-
+    </LinearLayout>
 
 
     <LinearLayout
         android:id="@+id/page_buttons"
         android:orientation="horizontal"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
+        android:paddingBottom="@dimen/activity_vertical_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-
+        android:paddingTop="@dimen/activity_vertical_margin"
         android:layout_gravity="center|left"
-        android:layout_marginBottom="17dp"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:weightSum="1">
+        android:layout_alignParentBottom="true">
 
         <Button
 
             style="@style/MyButton"
-            android:layout_width="221dp"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:text=" Vas y"
             android:textStyle="italic"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
-            android:textSize="12pt"
+            android:textSize="13pt"
 
 
             android:background="@drawable/mybtnmauve"
             android:id="@+id/maintenant"
             android:layout_marginRight="@dimen/button_margin"
-            android:layout_weight="0.15" />
+            />
 
         <Button style="@style/MyButton"
-            android:layout_width="202dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/plustard"
             android:textColor="@color/white"
             android:background="@drawable/mybtn"
             android:id="@+id/partirpl"
-android:layout_marginBottom="@dimen/activity_horizontal_margin"
+
             android:layout_marginLeft="@dimen/button_margin"
 
-            android:textSize="12pt"
-            android:layout_weight="0.27" />
+            android:textSize="13pt"
+            />
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
 
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/linearLayout"
-        android:layout_alignStart="@+id/linearLayout"
-        android:layout_below="@+id/titre"
-        android:layout_alignBottom="@+id/departure"
-        android:id="@+id/relativeLayout">
+        android:layout_above="@+id/linearLayout"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="99dp">
 
 
 
@@ -116,66 +121,65 @@ android:layout_marginBottom="@dimen/activity_horizontal_margin"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Gare de départ"
-            android:drawableLeft="@drawable/ic_communication_call_madered"
+            android:drawableLeft="@drawable/greenarrowlarge"
+
             android:id="@+id/depart"
             android:textStyle="bold"
 
             android:layout_gravity="center_horizontal"
+            android:layout_alignParentTop="true"
             android:layout_toRightOf="@+id/imageView3"
-            android:layout_toEndOf="@+id/imageView3"
-            android:layout_alignParentBottom="true" />
+            android:layout_toEndOf="@+id/imageView3" />
         <!--  android:layout_below="@+id/title"-->
 
+
+
         <Spinner
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/spinner"
             android:paddingTop="10dp"
+            android:gravity="center"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/depart" />
 
-            android:layout_toEndOf="@+id/imageView2"
-            android:layout_below="@+id/titre"
-            android:layout_alignBottom="@+id/departure" />
-    </LinearLayout>
+    </RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
 
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_above="@+id/page_buttons"
-        android:id="@+id/relativeLayout2"
-        android:layout_below="@+id/departure">
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="108dp"
+        android:layout_below="@+id/linearLayout"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Gare d&apos;arrivée"
-            android:drawableLeft="@drawable/ic_communication_call_made"
-
+            android:drawableLeft="@drawable/redarrowlarge"
+            android:gravity="left"
             android:textStyle="bold"
             android:id="@+id/arrivee"
+            android:layout_gravity="center_horizontal"
             android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
-        <Spinner
-            android:layout_width="290dp"
-            android:layout_height="43dp"
+            android:layout_toRightOf="@+id/imageView2"
+            android:layout_toEndOf="@+id/imageView2" />
 
+
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/spinnerarr"
             android:paddingTop="10dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_alignBottom="@+id/relativeLayout2"
-            android:layout_alignTop="@+id/linearLayout" />
-    </LinearLayout>
-
-
-
-
-
-
+            android:layout_below="@+id/arrivee"
+            android:layout_alignParentBottom="true" />
+    </RelativeLayout>
 
 </RelativeLayout>
