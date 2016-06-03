@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="PROCHAINS TRAINS"
-            android:textSize="35dp"
+            android:textSize="45dp"
             android:gravity="center"
             android:elevation="5dp"
             android:textColor="@color/mauve"
@@ -116,10 +116,10 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/linearLayout"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="99dp">
+        android:layout_below="@+id/departure"
+        android:layout_alignLeft="@+id/titre"
+        android:layout_alignStart="@+id/titre"
+        android:layout_marginTop="118dp">
 
 
 

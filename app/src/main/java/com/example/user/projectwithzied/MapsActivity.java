@@ -16,6 +16,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -95,31 +96,36 @@ import static com.example.user.projectwithzied.R.drawable.ic_maps_directions_tra
 import static com.example.user.projectwithzied.R.drawable.ic_maps_directions_walk;
 import static com.example.user.projectwithzied.R.drawable.ic_metro_512;
 
-public class MapsActivity extends FragmentActivity  implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
+    private static Location mCurrentLocation;
+
     private GoogleMap mMap;
     private String TAG = "mapp";
     public String station;
-     public Double attr1,attr2;
+    public Double attr1, attr2;
     private TextView mTextView;
-    public Double lon,lat;
-    private long heures,minutes;
-public Marker marker;
-    private Marker markerTrain,markerGare,markerEzzahra,markerBorjArif;
-    private Marker markerSidiMessaoud,markerBaghdadi,markerMahdiaZT,markerTeboulba,markerTeboulbaZI,markerBekalta,markerMonkine,markerMoknineGribaa,markerKsarHelal,markerKsarHelalZI,markerSayyada,markerLamta,
-            markerBouhdjar,markerKsiba,markerKhnis,markerFrina,markerMonastirZI,markerFac2,markerMonastir,markerFac,markerAeroport,markerHotels,markerSahlineSabkha,markerSahlineVille,markerSousseZI,markerDepot,markerSousseSud,markerMed5,markerBebJdid;
-public String minName;
-    public String url="http://bustime.mta.info/api/siri/stop-monitoring.json";
-//public String url="http://bustime.mta.info/api/siri/stop-monitoring.json?key=5c71f1f4-2f1e-46c7-b291-654bbe216a9c&OperatorRef=MTA&MonitoringRef=308209&LineRef=MTA%20NYCT_B63";
+    private long heures, minutes;
+    public Double longitude, lattitud;
+    public Marker marker;
+    public LatLng latLng;
+    private Marker markerTrain, markerGare, markerEzzahra, markerBorjArif;
+    private Marker markerSidiMessaoud, markerBaghdadi, markerMahdiaZT, markerTeboulba, markerTeboulbaZI, markerBekalta, markerMonkine, markerMoknineGribaa, markerKsarHelal, markerKsarHelalZI, markerSayyada, markerLamta,
+            markerBouhdjar, markerKsiba, markerKhnis, markerFrina, markerMonastirZI, markerFac2, markerMonastir, markerFac, markerAeroport, markerHotels, markerSahlineSabkha, markerSahlineVille, markerSousseZI, markerDepot, markerSousseSud, markerMed5, markerBebJdid;
+    public String minName;
+    public String url = "http://bustime.mta.info/api/siri/stop-monitoring.json";
+    //public String url="http://bustime.mta.info/api/siri/stop-monitoring.json?key=5c71f1f4-2f1e-46c7-b291-654bbe216a9c&OperatorRef=MTA&MonitoringRef=308209&LineRef=MTA%20NYCT_B63";
     private TextView mTextViewTime;
     public Vibrator vibe;
     private Switch mToggle;
     private String PREFS_NAME;
 
+
     protected int getLayoutId() {
         return R.layout.maps_layout;
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,8 +137,8 @@ public String minName;
         mapFragment.getMapAsync(this);
         mTextView = (TextView) findViewById(R.id.station);
         mTextViewTime = (TextView) findViewById(R.id.temp);
-        mToggle=(Switch) findViewById(R.id.tgl);
-         vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        mToggle = (Switch) findViewById(R.id.tgl);
+        vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         if (savedInstanceState == null) {
             // First incarnation of this activity.
@@ -149,8 +155,9 @@ public String minName;
                 .build();
         Log.d(TAG, "onCreate:client créé");
 
-savePreferences();
-}
+        savePreferences();
+    }
+
     public void savePreferences() {
         final SharedPreferences settings = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         mToggle.setChecked(settings.getBoolean("auto", false));
@@ -181,8 +188,8 @@ savePreferences();
         mMap = googleMap;
 
         try {
-        String result= getJSON(60);
-            Log.d(TAG, "onMapReady: "+result);
+            String result = getJSON(60);
+            Log.d(TAG, "onMapReady: " + result);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -227,12 +234,15 @@ savePreferences();
         LatLng BEBJDID = new LatLng(lat("Sousse Bab Jédid"), lon("Sousse Bab Jédid"));
 
 
+        marker = mMap.addMarker(new MarkerOptions().title("Vous êtes ici").position(new LatLng(0, 0)));
+        Log.d(TAG, "marker: " + marker.getPosition());
+        marker.setIcon(BitmapDescriptorFactory.fromResource(ic_maps_directions_walk));
 
 
         markerGare = mMap.addMarker(new MarkerOptions()
                 .title("Mahdia")
                 .position(gare));
-    //    markerGare.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_metro_512));
+        //    markerGare.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_metro_512));
 
 //markerGare.setVisible(false);
 
@@ -241,10 +251,10 @@ savePreferences();
                 .position(new LatLng(35.5000434191629, 11.0483183619427)));
         markerBorjArif = mMap.addMarker(new MarkerOptions()
                 .title("borj arif")
-                .position(new LatLng(35.5061928462048, 11.0303670358646)));
+                .position(BorjArif));
         markerSidiMessaoud = mMap.addMarker(new MarkerOptions()
                 .title("sidi messaoud")
-                .position(new LatLng(35.5210715684533, 11.02721426692)));
+                .position(SM));
         markerMahdiaZT = mMap.addMarker(new MarkerOptions()
                 .title("Mahdia Zone Touristique")
                 .position(MZT));
@@ -300,7 +310,7 @@ savePreferences();
         markerMonastir = mMap.addMarker(new MarkerOptions()
                 .title("Monastir")
                 .position(MONASTIR));
-      //  markerMonastir.setIcon(BitmapDescriptorFactory.fromResource(ic_metro_512));
+        //  markerMonastir.setIcon(BitmapDescriptorFactory.fromResource(ic_metro_512));
 
         markerFac = mMap.addMarker(new MarkerOptions()
                 .title("Faculté")
@@ -333,21 +343,20 @@ savePreferences();
         markerBebJdid = mMap.addMarker(new MarkerOptions()
                 .title("Beb Jdid")
                 .position(BEBJDID));
-     //   markerBebJdid.setIcon(BitmapDescriptorFactory.fromResource(ic_metro_512));
-      //  markerTrain=mMap.addMarker(new MarkerOptions()
-       // .title("Votre Train est ici");
+        //   markerBebJdid.setIcon(BitmapDescriptorFactory.fromResource(ic_metro_512));
+        //  markerTrain=mMap.addMarker(new MarkerOptions()
+        // .title("Votre Train est ici");
 //        .position(new LatLng((attr1),attr2)));
-   //     markerTrain.setIcon(BitmapDescriptorFactory.fromResource(ic_maps_directions_transit));
+        //     markerTrain.setIcon(BitmapDescriptorFactory.fromResource(ic_maps_directions_transit));
 
-        marker = mMap.addMarker(new MarkerOptions().title("Vous êtes ici").position(new LatLng(0, 0)));
-        marker.setIcon(BitmapDescriptorFactory.fromResource(ic_maps_directions_walk));
+
         // Polylines are useful for marking paths and routes on the map.
         mMap.addPolyline(new PolylineOptions().geodesic(true)
                 .add(new LatLng(35.5008333078298, 11.0644082609385))  // La gare
                 .add(new LatLng(35.496206, 11.059541))
                 .add(new LatLng(35.5000434191629, 11.0483183619427))  // EZZAHRA
-                .add(new LatLng(35.5061928462048, 11.0303670358646))  // borj arif
-                .add(new LatLng(35.5210715684533, 11.02721426692))  // sidi massaoud
+                .add((BorjArif))  // borj arif
+                .add(SM)  // sidi massaoud
                 .add(MZT)  // Mahdia ZT
 
                 .add(BAGH)  // Baghdadi
@@ -385,7 +394,6 @@ savePreferences();
         );
 
 
-
         CameraPosition cp = CameraPosition.builder()
                 .target(new LatLng(lat(depar), lon(depar)))
 
@@ -404,29 +412,30 @@ savePreferences();
     }
 
 
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public Double getLattitud() {
+        return lattitud;
+    }
 
     private double showDistance(Marker m) {
-      //  double distance = SphericalUtil.computeDistanceBetween(getMarker().getPosition(), m.getPosition());
-         double distance = SphericalUtil.computeDistanceBetween(marker.getPosition(), m.getPosition());
-        Log.d(TAG, "marqueur: "+marker.getPosition());
+
+double distance = SphericalUtil.computeDistanceBetween(new LatLng(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude()), m.getPosition());
+   //     double distance = SphericalUtil.computeDistanceBetween((marker.getPosition()), m.getPosition());
+     Log.d(TAG, "marqueur: "+mCurrentLocation.getLongitude());
+        // Log.d(TAG, "marqueur: "+getLattitude());
         //  Toast.makeText(MapsActivity.this, "la distance est" + formatNumber(distance), Toast.LENGTH_LONG).show();
-        Log.d(TAG, "showDistance: "+formatNumber(distance));
+        Log.d(TAG, "showDistance: " + formatNumber(distance));
         return distance;
     }
-    @Override
-    public void onLocationChanged(Location location) {
-        lon = location.getLongitude();
-        lat = location.getLatitude();
-        final LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        marker.setPosition(latLng);
-        Log.d(TAG, "onLocationChanged: ");
-        //   Toast.makeText(this, "longitude" + lon + "lattitude" + lat, Toast.LENGTH_LONG).show();
-    }
+
     private void difference() {
         double next;
-         minName="";
+        minName = "";
         int i = 0;
-        double mindist=0.00;
+        double mindist = 0.00;
         ArrayList<Marker> listM = new ArrayList<>();
 
         listM.add(markerGare);
@@ -452,26 +461,34 @@ savePreferences();
         listM.add(markerFac2);
         listM.add(markerMonastir);
         listM.add(markerFac);
-        listM.add(markerAeroport);listM.add(markerHotels);listM.add(markerSahlineSabkha);listM.add(markerSahlineVille);
-        listM.add(markerSousseZI);listM.add(markerDepot);listM.add(markerSousseSud);listM.add(markerMed5);listM.add(markerBebJdid);
+        listM.add(markerAeroport);
+        listM.add(markerHotels);
+        listM.add(markerSahlineSabkha);
+        listM.add(markerSahlineVille);
+        listM.add(markerSousseZI);
+        listM.add(markerDepot);
+        listM.add(markerSousseSud);
+        listM.add(markerMed5);
+        listM.add(markerBebJdid);
 
 
         mindist = showDistance(listM.get(0));
-        minName=listM.get(0).getTitle();
-        Log.d(TAG, "minNameInitial: "+minName);
-        for (i=0;i<listM.size()-1;i++) {
-               next=showDistance(listM.get(i + 1));
-               if ((Double.valueOf(next) < Double.valueOf(mindist))) {
-                   mindist = next;
-                   minName = listM.get(i + 1).getTitle();
-                   Log.d(TAG, "minNamefinal: "+minName);
-               }
-           }
-timer();
+        minName = listM.get(0).getTitle();
+        Log.d(TAG, "minNameInitial: " + minName);
+        for (i = 0; i < listM.size() - 1; i++) {
+            next = showDistance(listM.get(i + 1));
+            if ((Double.valueOf(next) < Double.valueOf(mindist))) {
+                mindist = next;
+                minName = listM.get(i + 1).getTitle();
+                Log.d(TAG, "minNamefinal: " + minName);
+            }
+        }
+        timer();
     }
-    private void timer(){
+
+    private void timer() {
         final Handler handler = new Handler();
-        Timer    timer = new Timer();
+        Timer timer = new Timer();
         TimerTask doAsynchronousTask = new TimerTask() {
             @Override
             public void run() {
@@ -479,9 +496,8 @@ timer();
                     @SuppressWarnings("unchecked")
                     public void run() {
                         try {
-                           affichage();
-                        }
-                        catch (Exception e) {
+                            affichage();
+                        } catch (Exception e) {
                             // TODO Auto-generated catch block
                         }
                     }
@@ -490,7 +506,8 @@ timer();
         };
         timer.schedule(doAsynchronousTask, 0, 60000);
     }
-    public void affichage(){
+
+    public void affichage() {
         java.sql.Time timeValueFromCuror = null;
         java.sql.Time timeValueNow = null;
         Intent in = getIntent();
@@ -509,44 +526,42 @@ timer();
         } catch (ParseException e) {
             e.printStackTrace();
         }
-         heures=0;
-         minutes=0;
-        long ecartEnMinutes = Math.abs( timeValueFromCuror.getTime()-timeValueNow.getTime() )/ 60000;
+        heures = 0;
+        minutes = 0;
+        long ecartEnMinutes = Math.abs(timeValueFromCuror.getTime() - timeValueNow.getTime()) / 60000;
 
-        if (ecartEnMinutes>60)
-        {
-            heures=ecartEnMinutes/60;
-            minutes=ecartEnMinutes-(heures*60);
-        }else
-        {
-            minutes=ecartEnMinutes;
+        if (ecartEnMinutes > 60) {
+            heures = ecartEnMinutes / 60;
+            minutes = ecartEnMinutes - (heures * 60);
+        } else {
+            minutes = ecartEnMinutes;
         }
-        Log.d(TAG, "difference de temp: "+ecartEnMinutes);
-        mTextView.setText(makeCharSequence(" Proche Station est ",minName));
-        if(timeValueFromCuror.after(timeValueNow)) {
-            mTextViewTime.setText(makeCharSequence(String.valueOf(heures + " " + "Heures")+" "+ String.valueOf(minutes + " " + "Minutes")," Restantes"));
+        Log.d(TAG, "difference de temp: " + ecartEnMinutes);
+        mTextView.setText(makeCharSequence(" Proche Station est ", minName));
+        if (timeValueFromCuror.after(timeValueNow)) {
+            mTextViewTime.setText(makeCharSequence(String.valueOf(heures + " " + "Heures") + " " + String.valueOf(minutes + " " + "Minutes"), " Restantes"));
 
         }
-        if(timeValueFromCuror.before(timeValueNow)) {
-            mTextViewTime.setText(makeCharSequence("Train Parti il y a:" + " ",String.valueOf(heures + " " + "Heures")+" "+ String.valueOf(minutes + " " + "Minutes")));
+        if (timeValueFromCuror.before(timeValueNow)) {
+            mTextViewTime.setText(makeCharSequence("Train Parti il y a:" + " ", String.valueOf(heures + " " + "Heures") + " " + String.valueOf(minutes + " " + "Minutes")));
 
             mToggle.setEnabled(false);
         }
         mToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (mToggle.isChecked()==false) {
+                if (mToggle.isChecked() == false) {
                     vibe.vibrate(100);
                     Toast.makeText(MapsActivity.this, "Notification Déactivée", Toast.LENGTH_LONG).show();
-                }else{
+                } else {
                     Toast.makeText(MapsActivity.this, "Notification activée", Toast.LENGTH_LONG).show();
                     vibe.vibrate(100);
                 }
             }
         });
 
-        if(mToggle.isChecked()==true){
+        if (mToggle.isChecked() == true) {
 
-            if(heures==0 && minutes==0) {
+            if (heures == 0 && minutes == 0) {
 
                 generateNotification(MapsActivity.this, "Votre métro est en place");
                 Log.d(TAG, "notification: ");
@@ -555,12 +570,13 @@ timer();
         }
 
 
-        Log.d(TAG, "text: "+mTextView);
-    //    Toast.makeText(MapsActivity.this,"la plus proche station est"+" "+minName,Toast.LENGTH_LONG).show();
+        Log.d(TAG, "text: " + mTextView);
+        //    Toast.makeText(MapsActivity.this,"la plus proche station est"+" "+minName,Toast.LENGTH_LONG).show();
     }
-    private CharSequence makeCharSequence(String prefix,String suffix) {
-       // String prefix = "La Plus Proche Station est: ";
-       // String suffix = minName;
+
+    private CharSequence makeCharSequence(String prefix, String suffix) {
+        // String prefix = "La Plus Proche Station est: ";
+        // String suffix = minName;
         String sequence = prefix + suffix;
         SpannableStringBuilder ssb = new SpannableStringBuilder(sequence);
         ssb.setSpan(new StyleSpan(ITALIC), 0, prefix.length(), SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -568,6 +584,7 @@ timer();
 
         return ssb;
     }
+
     private String formatNumber(double distance) {
         String unit = "m";
         if (distance < 1) {
@@ -579,8 +596,9 @@ timer();
         }
         return String.format("%4.3f%s", distance, unit);
     }
-    public Double lat(String station)  {
-        Double  lat = null;
+
+    public Double lat(String station) {
+        Double lat = null;
         DataBaseHelper myDbHelper = new DataBaseHelper(MapsActivity.this);
         try {
 
@@ -612,13 +630,14 @@ timer();
         Log.d(TAG, "done:");
         if (cur.moveToFirst()) {
             do {
-               lat= cur.getDouble(0);
+                lat = cur.getDouble(0);
             } while (cur.moveToNext());
 
         }
         return lat;
     }
-    public Double lon(String station)  {
+
+    public Double lon(String station) {
         Double lon = null;
         DataBaseHelper myDbHelper = new DataBaseHelper(MapsActivity.this);
         try {
@@ -651,12 +670,14 @@ timer();
         Log.d(TAG, "done:");
         if (cur.moveToFirst()) {
             do {
-               lon= cur.getDouble(1);
+                lon = cur.getDouble(1);
             } while (cur.moveToNext());
 
         }
         return lon;
-    };
+    }
+
+    ;
 
 
     public GoogleMap getmMap() {
@@ -666,10 +687,35 @@ timer();
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (mCurrentLocation != null) {
+            // Print current location if not null
+            Log.d("DEBUG", "current location: " + mCurrentLocation.toString());
+             latLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+        }
+        startLocationUpdates();
+        Log.d(TAG, "request:done");
+
+
+
+    }
+    protected void startLocationUpdates() {
+        // Create the location request
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setInterval(10000);
-        Log.d(TAG, "request:done");
+        // Request location updates
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -690,10 +736,20 @@ timer();
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
+                mLocationRequest, this);
     }
-
+    @Override
+    public void onLocationChanged(Location location) {
+        longitude = location.getLongitude();
+        mCurrentLocation=location;
+        lattitud = location.getLatitude();
+        latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        marker.setPosition(latLng);
+        Log.d(TAG, "onLocationChangedlon: "+longitude);
+        Log.d(TAG, "onLocationChangedlat: "+lattitud);
+          Toast.makeText(this, "longitude" + mCurrentLocation.getLatitude() + "lattitude" + mCurrentLocation.getLongitude(), Toast.LENGTH_LONG).show();
+    }
     @Override
     public void onConnectionSuspended(int i) {
 
