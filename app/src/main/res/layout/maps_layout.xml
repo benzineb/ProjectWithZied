@@ -24,7 +24,7 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true" />
         <TextView
-            android:text="Metro En Place"
+            android:text=""
             android:gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
             android:layout_marginLeft="51dp"
             android:layout_marginStart="51dp" />
         <TextView
-            android:text="stat"
+            android:text=""
             android:textStyle="bold"
             android:gravity="center"
             android:layout_width="match_parent"

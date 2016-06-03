@@ -234,9 +234,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng BEBJDID = new LatLng(lat("Sousse Bab Jédid"), lon("Sousse Bab Jédid"));
 
 
-        marker = mMap.addMarker(new MarkerOptions().title("Vous êtes ici").position(new LatLng(0, 0)));
-        Log.d(TAG, "marker: " + marker.getPosition());
-        marker.setIcon(BitmapDescriptorFactory.fromResource(ic_maps_directions_walk));
+
 
 
         markerGare = mMap.addMarker(new MarkerOptions()
@@ -420,16 +418,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return lattitud;
     }
 
-    private double showDistance(Marker m) {
 
-double distance = SphericalUtil.computeDistanceBetween(new LatLng(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude()), m.getPosition());
-   //     double distance = SphericalUtil.computeDistanceBetween((marker.getPosition()), m.getPosition());
-     Log.d(TAG, "marqueur: "+mCurrentLocation.getLongitude());
-        // Log.d(TAG, "marqueur: "+getLattitude());
-        //  Toast.makeText(MapsActivity.this, "la distance est" + formatNumber(distance), Toast.LENGTH_LONG).show();
-        Log.d(TAG, "showDistance: " + formatNumber(distance));
-        return distance;
-    }
 
     private void difference() {
         double next;
@@ -471,19 +460,26 @@ double distance = SphericalUtil.computeDistanceBetween(new LatLng(mCurrentLocati
         listM.add(markerMed5);
         listM.add(markerBebJdid);
 
-
-        mindist = showDistance(listM.get(0));
-        minName = listM.get(0).getTitle();
-        Log.d(TAG, "minNameInitial: " + minName);
-        for (i = 0; i < listM.size() - 1; i++) {
-            next = showDistance(listM.get(i + 1));
-            if ((Double.valueOf(next) < Double.valueOf(mindist))) {
-                mindist = next;
-                minName = listM.get(i + 1).getTitle();
-                Log.d(TAG, "minNamefinal: " + minName);
-            }
+if(mCurrentLocation!=null) {
+    mindist = showDistance(listM.get(0));
+    minName = listM.get(0).getTitle();
+    Log.d(TAG, "minNameInitial: " + minName);
+    for (i = 0; i < listM.size() - 1; i++) {
+        next = showDistance(listM.get(i + 1));
+        if ((Double.valueOf(next) < Double.valueOf(mindist))) {
+            mindist = next;
+            minName = listM.get(i + 1).getTitle();
+            Log.d(TAG, "minNamefinal: " + minName);
         }
-        timer();
+    }
+    Toast.makeText(this, "il vous sépare que  " + mindist + " " + "Mètres", Toast.LENGTH_LONG).show();
+    timer();
+}else{
+    Toast.makeText(this,"Veuillez activer la localisation",Toast.LENGTH_LONG).show();
+    mToggle.setEnabled(false);
+    mToggle.setChecked(false);
+
+}
     }
 
     private void timer() {
@@ -687,7 +683,7 @@ double distance = SphericalUtil.computeDistanceBetween(new LatLng(mCurrentLocati
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-
+        mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -698,7 +694,7 @@ double distance = SphericalUtil.computeDistanceBetween(new LatLng(mCurrentLocati
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
         if (mCurrentLocation != null) {
             // Print current location if not null
             Log.d("DEBUG", "current location: " + mCurrentLocation.toString());
@@ -707,7 +703,7 @@ double distance = SphericalUtil.computeDistanceBetween(new LatLng(mCurrentLocati
         startLocationUpdates();
         Log.d(TAG, "request:done");
 
-
+        mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
     }
     protected void startLocationUpdates() {
@@ -744,11 +740,26 @@ double distance = SphericalUtil.computeDistanceBetween(new LatLng(mCurrentLocati
         longitude = location.getLongitude();
         mCurrentLocation=location;
         lattitud = location.getLatitude();
-        latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        latLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+        marker = mMap.addMarker(new MarkerOptions().title("Vous êtes ici").position(latLng));
+        Log.d(TAG, "marker: " + marker.getPosition());
+        marker.setIcon(BitmapDescriptorFactory.fromResource(ic_maps_directions_walk));
         marker.setPosition(latLng);
         Log.d(TAG, "onLocationChangedlon: "+longitude);
         Log.d(TAG, "onLocationChangedlat: "+lattitud);
-          Toast.makeText(this, "longitude" + mCurrentLocation.getLatitude() + "lattitude" + mCurrentLocation.getLongitude(), Toast.LENGTH_LONG).show();
+       //   Toast.makeText(this, "longitude" + mCurrentLocation.getLatitude() + "lattitude" + mCurrentLocation.getLongitude(), Toast.LENGTH_LONG).show();
+    }
+    private double showDistance(Marker m) {
+
+double distance = SphericalUtil.computeDistanceBetween(new LatLng(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude()), m.getPosition());
+//    double distance = SphericalUtil.computeDistanceBetween((marker.getPosition()), m.getPosition());
+//        double distance = SphericalUtil.computeDistanceBetween(marker.getPosition(), m.getPosition());
+
+//        Log.d(TAG, "marqueur: "+mCurrentLocation.getLongitude());
+        // Log.d(TAG, "marqueur: "+getLattitude());
+        //  Toast.makeText(MapsActivity.this, "la distance est" + formatNumber(distance), Toast.LENGTH_LONG).show();
+
+        return distance;
     }
     @Override
     public void onConnectionSuspended(int i) {
