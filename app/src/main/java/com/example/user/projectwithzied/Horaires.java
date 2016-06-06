@@ -25,11 +25,16 @@ import com.example.user.projectwithzied.dummy.CustomCursorAdapter;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class Horaires extends HorairesStat {
     private CustomCursorAdapter customAdapter;
     private ListView listView;
     private final String Tag = "jab";
+public Cursor cur;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,15 +65,18 @@ public class Horaires extends HorairesStat {
                 e.printStackTrace();
             }
         }
-        Toast.makeText(Horaires.this, "success", Toast.LENGTH_SHORT).show();
+        // Toast.makeText(Horaires.this, "success", Toast.LENGTH_SHORT).show();
         listView = (ListView) findViewById(R.id.list_data);
         SQLiteDatabase db = myDbHelper.getReadableDatabase();
         final MainActivity mainActivity = new MainActivity();
         String depart = mainActivity.getGareDepart();
         String head = mainActivity.getHeadsign();
-
-        final Cursor cur = db.rawQuery("select  _id,arrival_time from stop_times,stops  where stop_times.stop_id=stops._id  and trip_id>43 and stops.stop_name=? and stop_times.stop_headsign=? order by departure_time", new String[]{depart, head});
-
+        mois();
+        if( (mois()=="juin")||(mois()=="juillet")||(mois()=="aout")) {
+             cur = db.rawQuery("select  _id,arrival_time from stop_times,stops  where stop_times.stop_id=stops._id  and trip_id>43 and stops.stop_name=? and stop_times.stop_headsign=? order by departure_time", new String[]{depart, head});
+        }else {
+            cur = db.rawQuery("select  _id,arrival_time from stop_times,stops  where stop_times.stop_id=stops._id  and trip_id<43 and stops.stop_name=? and stop_times.stop_headsign=? order by departure_time", new String[]{depart, head});
+        }
         Log.d(Tag, "horaires:");
         if (cur.moveToFirst()) {
             do {
@@ -84,7 +92,7 @@ public class Horaires extends HorairesStat {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (isOnline() == false) {
                     Toast.makeText(Horaires.this, "Vérifier connexion internet", Toast.LENGTH_LONG).show();
-                } else  {
+                } else {
                     vibe.vibrate(100);
                     Log.d(Tag, "clicked on item: " + position);
                     Intent map = new Intent(Horaires.this, MapsActivity.class);
@@ -116,7 +124,19 @@ public class Horaires extends HorairesStat {
                 cm.getActiveNetworkInfo().isConnectedOrConnecting();
     }
 
-    public boolean isEnabled(int position) {
-        return false;
+    public String mois() {
+        java.sql.Time timeValueNow = null;
+        DateFormat formatter = new SimpleDateFormat("MMM");
+        String timeStamp = formatter.format(Calendar.getInstance().getTime());
+        Log.d(Tag, "mois: " + timeStamp);
+        try {
+            timeValueNow = new java.sql.Time(formatter.parse(timeStamp).getTime());
+
+            Log.d(Tag, "moisapp: " + timeValueNow);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return timeStamp;
     }
 }
+

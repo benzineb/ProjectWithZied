@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
-        <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <!--
  The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -14,12 +14,12 @@
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <supports-screens
         android:anyDensity="true"
         android:largeScreens="true"
         android:normalScreens="true"
         android:smallScreens="true" />
-
 
     <application
         android:allowBackup="true"
@@ -28,7 +28,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <uses-library android:name="com.google.android.maps" />
-
 
         <activity
             android:name=".MainActivity"
@@ -41,7 +40,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".Horaires" />
-        <activity android:name=".HorairesStat"/>
+        <activity android:name=".HorairesStat" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -56,7 +55,8 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
+            android:label="@string/title_activity_maps" />
+        <activity android:name=".propos"></activity>
     </application>
 
 </manifest>

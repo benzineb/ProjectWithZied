@@ -1,11 +1,10 @@
 package com.example.user.projectwithzied;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,10 +12,8 @@ import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
-import android.location.LocationManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -26,8 +23,6 @@ import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NotificationCompat;
@@ -146,6 +141,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } else {
             // Reincarnated activity. The obtained map is the same map instance in the previous
             // activity life cycle. There is no need to reinitialize it.
+
             mMap = mapFragment.getMap();
         }
         setUpMapIfNeeded();
@@ -154,8 +150,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .addOnConnectionFailedListener(this)
                 .build();
         Log.d(TAG, "onCreate:client créé");
-
         savePreferences();
+
     }
 
     public void savePreferences() {
@@ -410,13 +406,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    public Double getLongitude() {
-        return longitude;
-    }
-
-    public Double getLattitud() {
-        return lattitud;
-    }
 
 
 
@@ -461,6 +450,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         listM.add(markerBebJdid);
 
 if(mCurrentLocation!=null) {
+    savePreferences();
     mindist = showDistance(listM.get(0));
     minName = listM.get(0).getTitle();
     Log.d(TAG, "minNameInitial: " + minName);
@@ -476,9 +466,7 @@ if(mCurrentLocation!=null) {
     timer();
 }else{
     Toast.makeText(this,"Veuillez activer la localisation",Toast.LENGTH_LONG).show();
-    mToggle.setEnabled(false);
-    mToggle.setChecked(false);
-
+savePreferences();
 }
     }
 
@@ -547,7 +535,7 @@ if(mCurrentLocation!=null) {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (mToggle.isChecked() == false) {
                     vibe.vibrate(100);
-                    Toast.makeText(MapsActivity.this, "Notification Déactivée", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MapsActivity.this, "Notification Désactivée", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(MapsActivity.this, "Notification activée", Toast.LENGTH_LONG).show();
                     vibe.vibrate(100);
@@ -749,7 +737,7 @@ if(mCurrentLocation!=null) {
         Log.d(TAG, "onLocationChangedlat: "+lattitud);
        //   Toast.makeText(this, "longitude" + mCurrentLocation.getLatitude() + "lattitude" + mCurrentLocation.getLongitude(), Toast.LENGTH_LONG).show();
     }
-    private double showDistance(Marker m) {
+    private double showDistance(Marker m) {//distance entre deux marqueurs
 
 double distance = SphericalUtil.computeDistanceBetween(new LatLng(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude()), m.getPosition());
 //    double distance = SphericalUtil.computeDistanceBetween((marker.getPosition()), m.getPosition());
@@ -782,14 +770,15 @@ double distance = SphericalUtil.computeDistanceBetween(new LatLng(mCurrentLocati
 
     protected void onStop() {
         super.onStop();
+      //  savePreferences();
         mGoogleApiClient.disconnect();
-        savePreferences();
+
     }
 
    @Override
     protected void onResume() {
         super.onResume();
-
+       savePreferences();
     }
     private void addIcon(IconGenerator iconFactory, CharSequence text, LatLng position) {
         MarkerOptions markerOptions = new MarkerOptions().
@@ -850,7 +839,7 @@ double distance = SphericalUtil.computeDistanceBetween(new LatLng(mCurrentLocati
     @Override
     protected void onPause() {
         super.onPause();
-        savePreferences();
+      //  savePreferences();
     }
     public String getJSON( int timeout) {
         HttpURLConnection c = null;

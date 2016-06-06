@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity   {
 
     partir.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) { //écouteur bouton vas y
 
                 if (dep.getSelectedItem() == arr.getSelectedItem()) {
 
@@ -201,6 +201,8 @@ public class MainActivity extends AppCompatActivity   {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+Intent menu=new Intent(this,propos.class);
+            startActivity(menu);
             return true;
         }
 
@@ -223,15 +225,7 @@ public class MainActivity extends AppCompatActivity   {
         return headsign;
     }
 
-    public void printMap(HashMap mp) {
-        Iterator it = mp.entrySet().iterator();
-        while (it.hasNext()) {
-           HashMap.Entry pair = (HashMap.Entry)it.next();
-        Toast.makeText(MainActivity.this,"key= "+pair.getKey() + " values= " + pair.getValue(),Toast.LENGTH_LONG).show();
 
-            it.remove(); // avoids a ConcurrentModificationException
-        }
-    }
 
 
 
