@@ -39,6 +39,7 @@ public Cursor cur;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_view_horaires);
+
         final Vibrator vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
 
@@ -94,6 +95,7 @@ public Cursor cur;
                     Toast.makeText(Horaires.this, "Vérifier connexion internet", Toast.LENGTH_LONG).show();
                 } else {
                     vibe.vibrate(100);
+
                     Log.d(Tag, "clicked on item: " + position);
                     Intent map = new Intent(Horaires.this, MapsActivity.class);
                     String selected = ((TextView) view.findViewById(R.id.dep)).getText().toString();

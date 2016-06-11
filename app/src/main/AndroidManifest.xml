@@ -32,6 +32,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
+            android:configChanges="orientation|keyboardHidden"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -39,7 +40,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Horaires" />
+        <activity android:name=".Horaires"
+            android:configChanges="orientation|keyboardHidden"/>
         <activity android:name=".HorairesStat" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.

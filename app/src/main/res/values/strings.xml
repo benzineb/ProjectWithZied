@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">SNCFT Mobile</string>
     <string name="action_settings">à propos</string>
-    <string name="plustard">plus tard</string>
+    <string name="plustard">Plus Tard</string>
     <string name="title_activity_maps">Map</string>
-
+    <string name="positif">réessayer</string>
+    <string name="negatif">OK</string>
+    <string name="messagedialog">Veuillez activer la localisation</string>
 </resources>

@@ -73,10 +73,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text=" Vas y"
+            android:text="Maintenant"
+            android:drawableLeft="@drawable/ic_action_historylargec"
             android:textStyle="italic"
             android:paddingLeft="16dp"
-            android:paddingRight="16dp"
+            android:paddingRight="25dp"
             android:textSize="13pt"
 
 
@@ -90,12 +91,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/plustard"
+            android:textStyle="italic"
+            android:drawableLeft="@drawable/ic_notification_event_availablelarge"
             android:textColor="@color/white"
             android:background="@drawable/mybtn"
             android:id="@+id/partirpl"
-
-            android:layout_marginLeft="@dimen/button_margin"
-
+            android:paddingLeft="16dp"
+            android:paddingRight="25dp"
+            android:layout_marginRight="@dimen/button_margin"
             android:textSize="13pt"
             />
     </LinearLayout>

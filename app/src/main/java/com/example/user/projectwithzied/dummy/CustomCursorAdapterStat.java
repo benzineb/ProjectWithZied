@@ -22,8 +22,7 @@ import java.util.Calendar;
  */
 public class CustomCursorAdapterStat extends CursorAdapter {
     public static String Tag="custom";
-    private Time timeFromBase;
-    Time currentTime;
+
     public CustomCursorAdapterStat(Context context, Cursor c) {
         super(context, c);
     }

@@ -75,10 +75,11 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text=" Vas y"
+                android:drawableLeft="@drawable/ic_action_historysmall"
                 android:textStyle="italic"
-                android:paddingLeft="16dp"
+
                 android:paddingRight="16dp"
-                android:textSize="13pt"
+                android:textSize="10pt"
 
 
                 android:background="@drawable/mybtnmauve"
@@ -94,10 +95,10 @@
                     android:textColor="@color/white"
                     android:background="@drawable/mybtn"
                     android:id="@+id/partirpl"
-
-                    android:layout_marginLeft="@dimen/button_margin"
-
-                    android:textSize="13pt"
+                    android:paddingRight="12dp"
+                    android:drawableLeft="@drawable/ic_notification_event_availablesmall"
+                    android:textSize="9pt"
+                android:textStyle="italic"
                    />
         </LinearLayout>
 

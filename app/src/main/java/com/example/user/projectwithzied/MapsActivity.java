@@ -1,11 +1,13 @@
 package com.example.user.projectwithzied;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -14,9 +16,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Location;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -30,16 +32,10 @@ import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
-import android.view.View;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -55,14 +51,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import static android.graphics.Typeface.BOLD;
 import static android.graphics.Typeface.ITALIC;
 import static android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -99,7 +93,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private String TAG = "mapp";
     public String station;
-    public Double attr1, attr2;
+    public Double attr1, attr2,attr3;
     private TextView mTextView;
     private long heures, minutes;
     public Double longitude, lattitud;
@@ -133,6 +127,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mTextView = (TextView) findViewById(R.id.station);
         mTextViewTime = (TextView) findViewById(R.id.temp);
         mToggle = (Switch) findViewById(R.id.tgl);
+        mToggle.setChecked(false);
         vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         if (savedInstanceState == null) {
@@ -150,19 +145,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .addOnConnectionFailedListener(this)
                 .build();
         Log.d(TAG, "onCreate:client créé");
-        savePreferences();
 
+            savePreferences();
     }
 
     public void savePreferences() {
         final SharedPreferences settings = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        mToggle.setChecked(settings.getBoolean("auto", false));
+        mToggle.setChecked(settings.getBoolean("auto", true));
         mToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putBoolean("auto", mToggle.isChecked());
+                editor.commit();
+
+            }
+        });
+
+    }
+    public void savePreferencesoff() {
+        final SharedPreferences settings = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        mToggle.setChecked(settings.getBoolean("auto", true));
+        mToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putBoolean("auto", mToggle.isChecked()==false);
                 editor.commit();
 
             }
@@ -184,8 +194,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         try {
-            String result = getJSON(60);
-            Log.d(TAG, "onMapReady: " + result);
+           parseJSON();
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -338,10 +347,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .title("Beb Jdid")
                 .position(BEBJDID));
         //   markerBebJdid.setIcon(BitmapDescriptorFactory.fromResource(ic_metro_512));
-        //  markerTrain=mMap.addMarker(new MarkerOptions()
-        // .title("Votre Train est ici");
-//        .position(new LatLng((attr1),attr2)));
-        //     markerTrain.setIcon(BitmapDescriptorFactory.fromResource(ic_maps_directions_transit));
+        markerTrain=mMap.addMarker(new MarkerOptions()
+         .title("Votre Train est ici")
+                .snippet("Vitesse"+attr3)
+        .position(new LatLng((attr1),attr2)));
+
+             markerTrain.setIcon(BitmapDescriptorFactory.fromResource(ic_maps_directions_transit));
 
 
         // Polylines are useful for marking paths and routes on the map.
@@ -449,28 +460,48 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         listM.add(markerMed5);
         listM.add(markerBebJdid);
 
-if(mCurrentLocation!=null) {
-    savePreferences();
-    mindist = showDistance(listM.get(0));
-    minName = listM.get(0).getTitle();
-    Log.d(TAG, "minNameInitial: " + minName);
-    for (i = 0; i < listM.size() - 1; i++) {
-        next = showDistance(listM.get(i + 1));
-        if ((Double.valueOf(next) < Double.valueOf(mindist))) {
-            mindist = next;
-            minName = listM.get(i + 1).getTitle();
-            Log.d(TAG, "minNamefinal: " + minName);
-        }
-    }
-    Toast.makeText(this, "il vous sépare que  " + mindist + " " + "Mètres", Toast.LENGTH_LONG).show();
+if (mCurrentLocation==null){
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder.setMessage(R.string.messagedialog)
+            .setNegativeButton(R.string.negatif, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+
+                    // finish();
+                    // Intent intent = new Intent(MapsActivity.class, MapsActivity.class);
+                    //  startActivity(intent);
+
+                }
+            });
+    // Create the AlertDialog object and return it
+   builder.create();
+    builder.show();
+
+    // LocationDialog locationDialog=new LocationDialog();
+
+  //   locationDialog.show(getSupportFragmentManager(),TAG);
     timer();
+
 }else{
-    Toast.makeText(this,"Veuillez activer la localisation",Toast.LENGTH_LONG).show();
-savePreferences();
+
+          //  savePreferences();
+            mindist = showDistance(listM.get(0));
+            minName = listM.get(0).getTitle();
+            Log.d(TAG, "minNameInitial: " + minName);
+            for (i = 0; i < listM.size() - 1; i++) {
+                next = showDistance(listM.get(i + 1));
+                if ((Double.valueOf(next) < Double.valueOf(mindist))) {
+                    mindist = next;
+                    minName = listM.get(i + 1).getTitle();
+                    Log.d(TAG, "minNamefinal: " + minName);
+                }
+            }
+            Toast.makeText(this, "il vous sépare que  " + mindist + " " + "Mètres", Toast.LENGTH_LONG).show();
+            timer();
+//savePreferences();
 }
     }
 
-    private void timer() {
+   public void timer() {
         final Handler handler = new Handler();
         Timer timer = new Timer();
         TimerTask doAsynchronousTask = new TimerTask() {
@@ -534,11 +565,14 @@ savePreferences();
         mToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (mToggle.isChecked() == false) {
+
                     vibe.vibrate(100);
                     Toast.makeText(MapsActivity.this, "Notification Désactivée", Toast.LENGTH_LONG).show();
+                     // savePreferencesoff();
                 } else {
                     Toast.makeText(MapsActivity.this, "Notification activée", Toast.LENGTH_LONG).show();
                     vibe.vibrate(100);
+                     // savePreferences();
                 }
             }
         });
@@ -691,7 +725,7 @@ savePreferences();
         startLocationUpdates();
         Log.d(TAG, "request:done");
 
-        mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+     //   mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
     }
     protected void startLocationUpdates() {
@@ -732,7 +766,7 @@ savePreferences();
         marker = mMap.addMarker(new MarkerOptions().title("Vous êtes ici").position(latLng));
         Log.d(TAG, "marker: " + marker.getPosition());
         marker.setIcon(BitmapDescriptorFactory.fromResource(ic_maps_directions_walk));
-        marker.setPosition(latLng);
+       // marker.setPosition(latLng);
         Log.d(TAG, "onLocationChangedlon: "+longitude);
         Log.d(TAG, "onLocationChangedlat: "+lattitud);
        //   Toast.makeText(this, "longitude" + mCurrentLocation.getLatitude() + "lattitude" + mCurrentLocation.getLongitude(), Toast.LENGTH_LONG).show();
@@ -770,7 +804,11 @@ double distance = SphericalUtil.computeDistanceBetween(new LatLng(mCurrentLocati
 
     protected void onStop() {
         super.onStop();
-      //  savePreferences();
+        if(mToggle.isChecked()==true) {
+          //  savePreferences();
+        }else{
+           // savePreferencesoff();
+        }
         mGoogleApiClient.disconnect();
 
     }
@@ -778,7 +816,7 @@ double distance = SphericalUtil.computeDistanceBetween(new LatLng(mCurrentLocati
    @Override
     protected void onResume() {
         super.onResume();
-       savePreferences();
+     //  savePreferences();
     }
     private void addIcon(IconGenerator iconFactory, CharSequence text, LatLng position) {
         MarkerOptions markerOptions = new MarkerOptions().
@@ -807,14 +845,15 @@ double distance = SphericalUtil.computeDistanceBetween(new LatLng(mCurrentLocati
     }
 
     public void generateNotification(Context context, String message) {
-
+MediaPlayer mMediaPlayer;
         int icon = R.mipmap.ic_launcher;
-        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-
-
         Intent intent = new Intent(context, Context.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
+        mMediaPlayer = new MediaPlayer();
+        mMediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.notifsound);
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mMediaPlayer.setLooping(true);
+        mMediaPlayer.start();
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Builder b = new NotificationCompat.Builder(context);
         b.setAutoCancel(true)
@@ -826,11 +865,13 @@ double distance = SphericalUtil.computeDistanceBetween(new LatLng(mCurrentLocati
                 .setTicker("SNCFT Mobile")
                 .setContentTitle("SNCFT Mobile")
                 .setContentText(message)
-                .setDefaults(Notification.DEFAULT_LIGHTS| Notification.DEFAULT_SOUND)
                 .setContentIntent(contentIntent)
                 .setContentInfo("Info");
-        Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
-        r.play();
+             //   .setDefaults(Notification.DEFAULT_LIGHTS| Notification.DEFAULT_SOUND)
+
+        mMediaPlayer.stop();
+
+
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(1, b.build());
 
@@ -839,7 +880,7 @@ double distance = SphericalUtil.computeDistanceBetween(new LatLng(mCurrentLocati
     @Override
     protected void onPause() {
         super.onPause();
-      //  savePreferences();
+        savePreferences();
     }
     public String getJSON( int timeout) {
         HttpURLConnection c = null;
@@ -920,6 +961,7 @@ double distance = SphericalUtil.computeDistanceBetween(new LatLng(mCurrentLocati
         json = json.getJSONObject("FirstTrain");
          attr1 = json.getDouble("lat");
          attr2 = json.getDouble("lon");
+        attr3=json.getDouble("vit");
 
 
 
