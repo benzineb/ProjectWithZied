@@ -103,6 +103,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Marker markerSidiMessaoud, markerBaghdadi, markerMahdiaZT, markerTeboulba, markerTeboulbaZI, markerBekalta, markerMonkine, markerMoknineGribaa, markerKsarHelal, markerKsarHelalZI, markerSayyada, markerLamta,
             markerBouhdjar, markerKsiba, markerKhnis, markerFrina, markerMonastirZI, markerFac2, markerMonastir, markerFac, markerAeroport, markerHotels, markerSahlineSabkha, markerSahlineVille, markerSousseZI, markerDepot, markerSousseSud, markerMed5, markerBebJdid;
     public String minName;
+            public Double mindist;
     public String url = "http://bustime.mta.info/api/siri/stop-monitoring.json";
     //public String url="http://bustime.mta.info/api/siri/stop-monitoring.json?key=5c71f1f4-2f1e-46c7-b291-654bbe216a9c&OperatorRef=MTA&MonitoringRef=308209&LineRef=MTA%20NYCT_B63";
     private TextView mTextViewTime;
@@ -127,7 +128,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mTextView = (TextView) findViewById(R.id.station);
         mTextViewTime = (TextView) findViewById(R.id.temp);
         mToggle = (Switch) findViewById(R.id.tgl);
-        mToggle.setChecked(false);
+        mToggle.setChecked(true);
         vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         if (savedInstanceState == null) {
@@ -145,8 +146,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .addOnConnectionFailedListener(this)
                 .build();
         Log.d(TAG, "onCreate:client créé");
-
-            savePreferences();
+if(mToggle.isChecked()==true) {
+    savePreferences();
+}
     }
 
     public void savePreferences() {
@@ -424,7 +426,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         double next;
         minName = "";
         int i = 0;
-        double mindist = 0.00;
+       mindist = 0.00;
         ArrayList<Marker> listM = new ArrayList<>();
 
         listM.add(markerGare);
@@ -461,7 +463,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         listM.add(markerBebJdid);
 
 if (mCurrentLocation==null){
-    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    final AlertDialog.Builder builder = new AlertDialog.Builder(this);
     builder.setMessage(R.string.messagedialog)
             .setNegativeButton(R.string.negatif, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
@@ -495,7 +497,7 @@ if (mCurrentLocation==null){
                     Log.d(TAG, "minNamefinal: " + minName);
                 }
             }
-            Toast.makeText(this, "il vous sépare que  " + mindist + " " + "Mètres", Toast.LENGTH_LONG).show();
+           // Toast.makeText(this, "il vous sépare que  " + mindist + " " + "Mètres", Toast.LENGTH_LONG).show();
             timer();
 //savePreferences();
 }
@@ -551,8 +553,9 @@ if (mCurrentLocation==null){
         } else {
             minutes = ecartEnMinutes;
         }
-        Log.d(TAG, "difference de temp: " + ecartEnMinutes);
-        mTextView.setText(makeCharSequence(" Proche Station est ", minName));
+        double d = (double) Math.round(mindist * 100) / 100;
+        Log.d(TAG, "format " +d);
+        mTextView.setText(makeCharSequence("Proche Station est ", minName+"("+d+"M"+")"));
         if (timeValueFromCuror.after(timeValueNow)) {
             mTextViewTime.setText(makeCharSequence(String.valueOf(heures + " " + "Heures") + " " + String.valueOf(minutes + " " + "Minutes"), " Restantes"));
 
@@ -816,7 +819,7 @@ double distance = SphericalUtil.computeDistanceBetween(new LatLng(mCurrentLocati
    @Override
     protected void onResume() {
         super.onResume();
-     //  savePreferences();
+       savePreferences();
     }
     private void addIcon(IconGenerator iconFactory, CharSequence text, LatLng position) {
         MarkerOptions markerOptions = new MarkerOptions().
