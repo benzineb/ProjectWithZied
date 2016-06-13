@@ -6,4 +6,5 @@
     <string name="positif">réessayer</string>
     <string name="negatif">OK</string>
     <string name="messagedialog">Veuillez activer la localisation</string>
+    <string name="message">Veuillez faire une rotation</string>
 </resources>

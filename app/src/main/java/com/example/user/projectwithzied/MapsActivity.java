@@ -32,6 +32,7 @@ import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -128,7 +129,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mTextView = (TextView) findViewById(R.id.station);
         mTextViewTime = (TextView) findViewById(R.id.temp);
         mToggle = (Switch) findViewById(R.id.tgl);
-        mToggle.setChecked(true);
         vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         if (savedInstanceState == null) {
@@ -146,14 +146,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .addOnConnectionFailedListener(this)
                 .build();
         Log.d(TAG, "onCreate:client créé");
+
 if(mToggle.isChecked()==true) {
     savePreferences();
+}else{savePreferencesoff();
 }
     }
 
     public void savePreferences() {
         final SharedPreferences settings = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        mToggle.setChecked(settings.getBoolean("auto", true));
+        mToggle.setChecked(settings.getBoolean("auto", false));
         mToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
             @Override
@@ -464,13 +466,18 @@ if(mToggle.isChecked()==true) {
 
 if (mCurrentLocation==null){
     final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    final AlertDialog.Builder builders = new AlertDialog.Builder(this);
     builder.setMessage(R.string.messagedialog)
             .setNegativeButton(R.string.negatif, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
 
-                    // finish();
-                    // Intent intent = new Intent(MapsActivity.class, MapsActivity.class);
-                    //  startActivity(intent);
+                    builders.setMessage(R.string.message)
+                            .setNegativeButton(R.string.negatif, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                }
+                            });
+                    builders.create();
+                    builders.show();
 
                 }
             });
@@ -568,13 +575,10 @@ if (mCurrentLocation==null){
         mToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (mToggle.isChecked() == false) {
-
-                    vibe.vibrate(100);
-                    Toast.makeText(MapsActivity.this, "Notification Désactivée", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MapsActivity.this, "Notification Désactivée", Toast.LENGTH_SHORT).show();
                      // savePreferencesoff();
                 } else {
-                    Toast.makeText(MapsActivity.this, "Notification activée", Toast.LENGTH_LONG).show();
-                    vibe.vibrate(100);
+                    Toast.makeText(MapsActivity.this, "Notification activée", Toast.LENGTH_SHORT).show();
                      // savePreferences();
                 }
             }
@@ -807,20 +811,20 @@ double distance = SphericalUtil.computeDistanceBetween(new LatLng(mCurrentLocati
 
     protected void onStop() {
         super.onStop();
-        if(mToggle.isChecked()==true) {
-          //  savePreferences();
-        }else{
-           // savePreferencesoff();
-        }
         mGoogleApiClient.disconnect();
-
+if(mToggle.isChecked()==false){
+    savePreferencesoff();
+}else {savePreferences();}
     }
 
    @Override
     protected void onResume() {
         super.onResume();
-       savePreferences();
-    }
+       if(mToggle.isChecked()==false){
+           savePreferencesoff();
+       }else {savePreferences();}
+
+   }
     private void addIcon(IconGenerator iconFactory, CharSequence text, LatLng position) {
         MarkerOptions markerOptions = new MarkerOptions().
                 icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(text))).
@@ -881,10 +885,27 @@ MediaPlayer mMediaPlayer;
     }
 
     @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            finish();
+            if(mToggle.isChecked()==false){
+                savePreferencesoff();
+            }else {savePreferences();
+            }
+// do something
+          //  yourView.notifyBackPressed();
+
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
-        savePreferences();
-    }
+        if(mToggle.isChecked()==false){
+            savePreferencesoff();
+        }else {savePreferences();}
+}
     public String getJSON( int timeout) {
         HttpURLConnection c = null;
         try {
